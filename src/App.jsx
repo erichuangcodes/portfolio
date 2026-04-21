@@ -115,10 +115,10 @@ const Navbar = () => {
 
 const Home = () => {
   const socials = [
-    { name: "Email", url: "mailto:huangeric1029@gmail.com" },
+    { name: "Email", url: "https://mail.google.com/mail/?view=cm&fs=1&to=huangeric1029@gmail.com" },
     { name: "TikTok", url: "https://tiktok.com/@bonsyfilms" },
     { name: "Instagram", url: "https://instagram.com/stemmics_" },
-    { name: "LinkedIn", url: "#" }
+    { name: "LinkedIn", url: "https://www.linkedin.com/in/eric-huang-49346a36a/" }
   ];
 
   return (
