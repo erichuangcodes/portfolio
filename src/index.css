@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #00f5a0;
+}
+
+/* This makes sure your background is always that deep black from Framer */
+body {
+  background-color: #09090b;
+  color: white;
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
+}
