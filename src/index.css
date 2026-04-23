@@ -1,13 +1,43 @@
 @import "tailwindcss";
 
-@theme {
-  --color-brand: #00f5a0;
+* { box-sizing: border-box; }
+
+body {
+  background-color: #020617;
+  color: #F8FAFC;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* This makes sure your background is always that deep black from Framer */
-body {
-  background-color: #09090b;
-  color: white;
-  margin: 0;
-  font-family: 'DM Sans', sans-serif;
+::selection {
+  background: rgba(94, 234, 212, 0.2);
+  color: #5EEAD4;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #020617; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
+
+input::placeholder,
+textarea::placeholder { color: #334155; }
+
+/* Projects grid — collapse to 1 col on mobile */
+@media (max-width: 640px) {
+  #projects > div { grid-template-columns: 1fr !important; }
+  #projects > div > * { grid-column: span 1 !important; }
+  /* Contact form name/email row */
+  form > div:first-child { grid-template-columns: 1fr !important; }
+}
+
+/* Hide nav items on small screens except Contact + dropdown */
+@media (max-width: 768px) {
+  .hidden-mobile { display: none !important; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
 }
