@@ -11,33 +11,28 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-::selection {
-  background: rgba(94, 234, 212, 0.2);
-  color: #5EEAD4;
-}
+::selection { background: rgba(94,234,212,0.18); color: #5EEAD4; }
 
-::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: #020617; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
+::-webkit-scrollbar-thumb { background: rgba(94,234,212,0.2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(94,234,212,0.35); }
 
-input::placeholder,
-textarea::placeholder { color: #334155; }
-
-/* Projects grid — collapse to 1 col on mobile */
-@media (max-width: 640px) {
-  #projects > div { grid-template-columns: 1fr !important; }
-  #projects > div > * { grid-column: span 1 !important; }
-  /* Contact form name/email row */
-  form > div:first-child { grid-template-columns: 1fr !important; }
-}
-
-/* Hide nav items on small screens except Contact + dropdown */
-@media (max-width: 768px) {
-  .hidden-mobile { display: none !important; }
-}
+input::placeholder, textarea::placeholder { color: #334155; }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px #5EEAD4; }
+  50%       { opacity: 0.4; box-shadow: 0 0 4px #5EEAD4; }
+}
+
+/* Mobile: collapse file card body to single column */
+@media (max-width: 680px) {
+  /* FileCard body grid → single col */
+  [data-card-body] { grid-template-columns: 1fr !important; }
+  /* Research paper → single col */
+  [data-paper-grid] { grid-template-columns: 1fr !important; }
+  /* sticky sidebar → static */
+  [data-paper-sidebar] { position: static !important; }
+  /* Contact row grid → single col */
+  [data-name-row] { grid-template-columns: 1fr !important; }
 }
