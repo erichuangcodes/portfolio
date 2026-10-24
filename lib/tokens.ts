@@ -24,11 +24,14 @@ export const colors = {
     subtle: "rgba(0, 0, 0, 0.08)",
     strong: "rgba(0, 0, 0, 0.16)",
   },
-  // Hero sphere scene — white stage with a warm key and a cool rim
+  // Hero sphere scene — warm off-white stage with a warm key and a cool rim
   scene: {
-    bg: "#FFFFFF",
+    bg: "#F4F1EC",
     key: "#FFEFD6",
     rim: "#8FB4FF",
+    // Occlusion tint: warm, so contact shadows sit in the same family as the
+    // stage instead of greying the pastels toward dirt.
+    ao: "#9A8F80",
   },
 } as const;
 
