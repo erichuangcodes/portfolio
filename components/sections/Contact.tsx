@@ -264,7 +264,7 @@ export default function Contact() {
       </div>
 
       {/* ── Footer row ──────────────────────────────────────────────────── */}
-      <div
+      <footer
         style={{
           display:        "flex",
           justifyContent: "space-between",
@@ -281,7 +281,7 @@ export default function Contact() {
         <span className="text-mono-label" style={{ color: colors.text.muted }}>
           Brooklyn, NY&nbsp;·&nbsp;<LocalTime />
         </span>
-      </div>
+      </footer>
 
       {/* Responsive layout */}
       <style>{`

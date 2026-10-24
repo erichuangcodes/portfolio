@@ -276,24 +276,6 @@ export default function Header() {
 
   return (
     <>
-      {/* ── Branding label — top-right corner ─────────────────────────────── */}
-      <div
-        style={{
-          position:   "fixed",
-          top:        "24px",
-          right:      "24px",
-          zIndex:     100,
-        }}
-        className="header-branding"
-      >
-        <span
-          className="text-mono-label"
-          style={{ color: colors.text.muted }}
-        >
-          Engineering Portfolio
-        </span>
-      </div>
-
       {/* ── Pill nav ──────────────────────────────────────────────────────── */}
       <header
         style={{
@@ -356,7 +338,6 @@ export default function Header() {
         @media (max-width: 767px) {
           .header-nav        { display: none !important; }
           .header-hamburger  { display: flex !important; }
-          .header-branding   { display: none !important; }
         }
       `}</style>
 
