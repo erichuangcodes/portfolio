@@ -11,10 +11,11 @@ export const CAMERA = {
 
 // ─── Atmosphere ───────────────────────────────────────────────────────────────
 // Camera sits at z=16 and the cluster spans z=-3.4..3.4, so distance runs
-// 12.6..19.4. Fog starting inside that span is what drops the far spheres into
-// shadow instead of lighting the cluster evenly front to back.
-export const FOG_NEAR = 10;
-export const FOG_FAR = 26;
+// 12.6..19.4. Fog starts past the front of the cluster and ends well beyond the
+// back of it, so the far spheres only soften — on a white stage anything
+// tighter dissolves them into the background.
+export const FOG_NEAR = 17;
+export const FOG_FAR = 48;
 
 // ─── Physics ──────────────────────────────────────────────────────────────────
 // Damping dominates the pull so motion stays heavy and never springs back.
@@ -25,7 +26,7 @@ export const LINEAR_DAMPING = 2.0;
 export const ANGULAR_DAMPING = 1.5;
 export const RESTITUTION = 0.04;
 export const FRICTION = 0.4;
-export const CENTER_PULL = 0.25;
+export const CENTER_PULL = 0.32;
 export const CONTAINMENT_GAIN = 14;
 
 // ─── Cluster bounds ───────────────────────────────────────────────────────────
@@ -51,6 +52,9 @@ export type SphereInstance = {
   /** Start offset along the palette ring, 0..1. */
   huePhase: number;
   huePeriod: number;
+  /** Ring distance to this sphere's second hue — kept small so the two
+   *  colours are neighbours on the ring and blend softly. */
+  huePair: number;
 };
 
 /** Seeded PRNG — the scene must not call Math.random (impure during render). */
@@ -94,6 +98,7 @@ export function buildInstances(count: number): SphereInstance[] {
       radius: RADIUS_MIN + (RADIUS_MAX - RADIUS_MIN) * Math.pow(rand(), 1.7),
       huePhase: rand(),
       huePeriod: HUE_PERIOD_MIN + rand() * (HUE_PERIOD_MAX - HUE_PERIOD_MIN),
+      huePair: 0.06 + rand() * 0.08,
     });
   }
 

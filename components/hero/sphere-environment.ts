@@ -11,15 +11,17 @@ type Panel = {
 // A dark room with two soft light panels. Prebaked into an env map so the
 // spheres get real reflections without fetching an external HDRI.
 const PANELS: Panel[] = [
-  { color: colors.scene.key, intensity: 3.2, size: [14, 14], position: [-9, 11, 8] },
-  { color: colors.scene.rim, intensity: 0.9, size: [16, 10], position: [11, -4, -9] },
+  { color: colors.scene.key, intensity: 1.6, size: [14, 14], position: [-9, 11, 8] },
+  { color: colors.scene.rim, intensity: 0.7, size: [16, 10], position: [11, -4, -9] },
   { color: colors.scene.key, intensity: 0.35, size: [20, 20], position: [0, -14, 0] },
 ];
 
 /** Caller owns the returned target and must dispose it. */
 export function buildEnvironment(gl: THREE.WebGLRenderer): THREE.WebGLRenderTarget {
   const room = new THREE.Scene();
-  room.background = new THREE.Color(colors.scene.bg);
+  // Deliberately darker than the page: a pure-white room reflects white into
+  // every sphere and erases the shadow side.
+  room.background = new THREE.Color(colors.scene.bg).multiplyScalar(0.95);
 
   const meshes = PANELS.map(({ color, intensity, size, position }) => {
     const mesh = new THREE.Mesh(

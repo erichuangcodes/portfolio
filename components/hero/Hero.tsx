@@ -98,43 +98,33 @@ export default function Hero() {
       {/* Layer 0 — animated background */}
       <HeroSpheres />
 
-      {/* Top-left: signature — scrolls away with the hero, not fixed.
-          Sits outside the z-10 content wrapper on purpose: the asset is white
-          ink on an opaque black plate, and `screen` can only drop that plate by
-          blending against the canvas. A z-indexed ancestor would isolate it. */}
-      <div
-        className="hero-signature"
-        style={{
-          position: "absolute",
-          top: "24px",
-          left: "24px",
-          zIndex: 5,
-          opacity: 0.8,
-          mixBlendMode: "screen",
-        }}
-      >
-        <Image
-          src="/portfolioicon.png"
-          alt="Eric Huang"
-          width={100}
-          height={100}
-          style={{ width: "100px", height: "auto", display: "block" }}
-          priority
-        />
-      </div>
-      <style>{`
-        @media (max-width: 767px) { .hero-signature { display: none; } }
-      `}</style>
-
       {/* Layer 10 — hero content */}
       <div style={{ position: "relative", zIndex: 10, height: "100%" }}>
+
+        {/* Top-left: signature — scrolls away with the hero, not fixed */}
+        <div
+          className="hero-signature"
+          style={{ position: "absolute", top: "24px", left: "24px", opacity: 0.8, mixBlendMode: "multiply" }}
+        >
+          <Image
+            src="/portfolioicon.png"
+            alt="Eric Huang"
+            width={100}
+            height={100}
+            style={{ width: "100px", height: "auto", display: "block" }}
+            priority
+          />
+        </div>
+        <style>{`
+          @media (max-width: 767px) { .hero-signature { display: none; } }
+        `}</style>
 
         {/* Top-right: portfolio datestamp — hidden on mobile, Header takes that space */}
         <div
           className="hero-datestamp"
           style={{ position: "absolute", top: "2rem", right: "2.5rem" }}
         >
-          <span className="text-mono-label" style={{ color: colors.onDark.muted }}>
+          <span className="text-mono-label" style={{ color: colors.text.muted }}>
             Portfolio&nbsp;/&nbsp;2026
           </span>
         </div>
@@ -155,7 +145,7 @@ export default function Hero() {
             <motion.h1
               className="text-display-xl"
               style={{
-                color: colors.onDark.primary,
+                color: colors.text.primary,
                 lineHeight: 0.9,
                 display: "flex",
                 flexWrap: "wrap",
@@ -207,7 +197,7 @@ export default function Hero() {
               <motion.p
                 key={LABELS[labelIndex]}
                 className="text-display-md"
-                style={{ color: colors.onDark.secondary, margin: 0 }}
+                style={{ color: colors.text.secondary, margin: 0 }}
                 initial={reduced ? false : labelEnter}
                 animate={labelCenter}
                 exit={reduced ? undefined : labelExit}

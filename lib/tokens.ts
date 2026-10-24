@@ -24,29 +24,26 @@ export const colors = {
     subtle: "rgba(0, 0, 0, 0.08)",
     strong: "rgba(0, 0, 0, 0.16)",
   },
-  // Hero sphere scene — near-black stage with a warm key and a cool rim
+  // Hero sphere scene — white stage with a warm key and a cool rim
   scene: {
-    bg: "#08070C",
+    bg: "#FFFFFF",
     key: "#FFEFD6",
     rim: "#8FB4FF",
-  },
-  // Text sitting on top of the dark hero scene (AA or better on scene.bg)
-  onDark: {
-    primary: "#F2F0ED",
-    secondary: "#A8A49E",
-    muted: "#8A857E",
   },
 } as const;
 
 // ---------------------------------------------------------------------------
-// Hero sphere palette — rich but muted; each sphere drifts through the ring
+// Hero sphere palette — pastels with enough saturation to hold against white.
+// Each sphere blends two neighbouring entries across its surface and drifts
+// slowly around the ring, so the range never leaves pastel.
 // ---------------------------------------------------------------------------
 export const spherePalette = [
-  "#6E1F49", // deep magenta
-  "#1D3576", // cobalt
-  "#0F544F", // teal
-  "#8A6115", // amber
-  "#4A2857", // plum
+  "#B9A7F0", // lavender
+  "#8FC4F2", // baby blue
+  "#8ADFC1", // mint
+  "#F4A9C0", // blush pink
+  "#F8BE96", // peach
+  "#F5DE8E", // butter yellow
 ] as const;
 
 // ---------------------------------------------------------------------------

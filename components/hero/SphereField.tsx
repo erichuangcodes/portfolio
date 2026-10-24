@@ -31,13 +31,69 @@ type Props = {
 
 const PALETTE = spherePalette.map((hex) => new THREE.Color(hex));
 
-function paletteColorAt(seed: SphereInstance, time: number, out: THREE.Color): THREE.Color {
-  const ring = ((seed.huePhase + time / seed.huePeriod) % 1) * PALETTE.length;
+function paletteColorAt(phase: number, out: THREE.Color): THREE.Color {
+  const ring = ((phase % 1) + 1) % 1 * PALETTE.length;
   const index = Math.floor(ring);
   const t = ring - index;
   return out
     .copy(PALETTE[index % PALETTE.length])
     .lerp(PALETTE[(index + 1) % PALETTE.length], t * t * (3 - 2 * t));
+}
+
+// Each sphere carries a second instanced colour and blends to it across its own
+// local Y axis, giving a soft two-hue gradient per ball. Physics slowly rotates
+// the bodies, so the gradient directions drift apart instead of lining up.
+const GRADIENT_CACHE_KEY = () => "hero-sphere-gradient";
+
+function writeColors(
+  mesh: THREE.InstancedMesh,
+  attribute: THREE.InstancedBufferAttribute,
+  seeds: SphereInstance[],
+  time: number,
+  scratch: THREE.Color,
+) {
+  for (let i = 0; i < seeds.length; i++) {
+    const seed = seeds[i];
+    const phase = seed.huePhase + time / seed.huePeriod;
+
+    mesh.setColorAt(i, paletteColorAt(phase, scratch));
+
+    paletteColorAt(phase + seed.huePair, scratch);
+    attribute.setXYZ(i, scratch.r, scratch.g, scratch.b);
+  }
+  if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+  attribute.needsUpdate = true;
+}
+
+function applyGradientShader(shader: { vertexShader: string; fragmentShader: string }) {
+  shader.vertexShader = shader.vertexShader
+    .replace(
+      "#include <common>",
+      `#include <common>
+      attribute vec3 aColorB;
+      varying vec3 vGradColor;
+      varying float vGradMix;`,
+    )
+    .replace(
+      "#include <begin_vertex>",
+      `#include <begin_vertex>
+      vGradColor = aColorB;
+      vGradMix = clamp( position.y * 0.5 + 0.5, 0.0, 1.0 );`,
+    );
+
+  shader.fragmentShader = shader.fragmentShader
+    .replace(
+      "#include <common>",
+      `#include <common>
+      varying vec3 vGradColor;
+      varying float vGradMix;`,
+    )
+    // color_fragment has just folded in instanceColor (hue A); blend toward B
+    .replace(
+      "#include <color_fragment>",
+      `#include <color_fragment>
+      diffuseColor.rgb = mix( diffuseColor.rgb, vGradColor, smoothstep( 0.0, 1.0, vGradMix ) );`,
+    );
 }
 
 export default function SphereField({ count, frozen }: Props) {
@@ -50,13 +106,14 @@ export default function SphereField({ count, frozen }: Props) {
 
   // Built once on mount: the seeded unit-ball layout scaled to the viewport.
   // Deliberately not recomputed on resize — that would restart the simulation.
-  const [{ seeds, instances }] = useState(() => {
+  const [{ seeds, instances, colorBArray }] = useState(() => {
     const built = buildInstances(count);
     const bx = Math.max(viewport.width, 1) * BOUNDS_X;
     const by = Math.max(viewport.height, 1) * BOUNDS_Y;
 
     return {
       seeds: built,
+      colorBArray: new Float32Array(built.length * 3),
       instances: built.map<InstancedRigidBodyProps>((seed, i) => ({
         key: i,
         position: [
@@ -69,14 +126,13 @@ export default function SphereField({ count, frozen }: Props) {
     };
   });
 
+  const colorB = useRef<THREE.InstancedBufferAttribute>(null);
+
   useLayoutEffect(() => {
     const mesh = meshRef.current;
-    if (!mesh) return;
+    if (!mesh || !colorB.current) return;
 
-    for (let i = 0; i < seeds.length; i++) {
-      mesh.setColorAt(i, paletteColorAt(seeds[i], 0, scratch.current));
-    }
-    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+    writeColors(mesh, colorB.current, seeds, 0, scratch.current);
     invalidate();
   }, [seeds, invalidate]);
 
@@ -103,11 +159,8 @@ export default function SphereField({ count, frozen }: Props) {
     const mesh = meshRef.current;
     const time = state.clock.elapsedTime;
 
-    if (mesh) {
-      for (let i = 0; i < seeds.length; i++) {
-        mesh.setColorAt(i, paletteColorAt(seeds[i], time, scratch.current));
-      }
-      if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+    if (mesh && colorB.current) {
+      writeColors(mesh, colorB.current, seeds, time, scratch.current);
     }
 
     const bodies = bodiesRef.current;
@@ -139,15 +192,26 @@ export default function SphereField({ count, frozen }: Props) {
       args={[undefined, undefined, count]}
       frustumCulled={false}
     >
-      <sphereGeometry args={[1, 28, 18]} />
+      <sphereGeometry args={[1, 28, 18]}>
+        {/* Attached declaratively so it lands on this geometry — setting it
+            imperatively races R3F attaching the geometry to the mesh, and a
+            missing attribute reads as black in the shader. */}
+        <instancedBufferAttribute
+          ref={colorB}
+          attach="attributes-aColorB"
+          args={[colorBArray, 3]}
+        />
+      </sphereGeometry>
       <meshPhysicalMaterial
+        onBeforeCompile={applyGradientShader}
+        customProgramCacheKey={GRADIENT_CACHE_KEY}
         roughness={0.52}
         metalness={0}
         clearcoat={0.25}
         clearcoatRoughness={0.55}
         sheen={0.9}
         sheenRoughness={0.6}
-        envMapIntensity={0.35}
+        envMapIntensity={1.0}
       />
     </instancedMesh>
   );

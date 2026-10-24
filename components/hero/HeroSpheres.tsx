@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas, useThree } from "@react-three/fiber";
-import { Bloom, DepthOfField, EffectComposer } from "@react-three/postprocessing";
+import { DepthOfField, EffectComposer, N8AO } from "@react-three/postprocessing";
 import { Physics } from "@react-three/rapier";
 import { useInView, useReducedMotion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -22,9 +22,15 @@ function Atmosphere() {
       <primitive object={environment.texture} attach="environment" />
       <color attach="background" args={[colors.scene.bg]} />
       <fog attach="fog" args={[colors.scene.bg, FOG_NEAR, FOG_FAR]} />
-      <ambientLight intensity={0.02} />
+      {/* These look high but are not. Three divides diffuse by PI and does not
+          pre-scale irradiance, so an intensity of ~PI is what renders a surface
+          at its true albedo. Dialling these down to "1.0" drops the pastels to
+          roughly half brightness, which reads as mud against white. */}
+      <ambientLight intensity={1.1} />
       <directionalLight position={[-7, 9, 7]} intensity={1.6} color={colors.scene.key} />
-      <directionalLight position={[8, -4, -7]} intensity={0.55} color={colors.scene.rim} />
+      {/* Rim from behind, aimed back at the camera — puts a bright edge on each
+          silhouette so spheres separate from the white page. */}
+      <directionalLight position={[3, -2, -9]} intensity={0.9} color={colors.scene.rim} />
     </>
   );
 }
@@ -61,6 +67,12 @@ export default function HeroSpheres() {
         // very first paint keep a stale size until something resizes the
         // window. The scene must be correct on load, so measure immediately.
         resize={{ scroll: false, debounce: 0 }}
+        // `flat` = NoToneMapping. R3F forces ACES otherwise, and ACES is built
+        // for HDR film: it desaturates bright colours toward khaki and turns
+        // these pastels muddy. Untonemapped, each sphere renders the colour it
+        // was authored as, so the lights above stay near 1.0 to avoid clipping.
+        // (Setting gl.toneMapping directly does not work — R3F overwrites it.)
+        flat
         gl={{ antialias: false, powerPreference: "high-performance" }}
       >
         <Atmosphere />
@@ -76,14 +88,16 @@ export default function HeroSpheres() {
 
         {!frozen && postprocessing && (
           <EffectComposer multisampling={0}>
-            <DepthOfField target={[0, 0, 0]} focalLength={0.08} bokehScale={2.2} height={480} />
-            <Bloom
-              intensity={0.45}
-              luminanceThreshold={0.55}
-              luminanceSmoothing={0.25}
-              mipmapBlur
-              height={300}
+            {/* Contact shadows where spheres meet, so the cluster reads as
+                separate objects instead of one flat mass. */}
+            <N8AO
+              aoRadius={1.3}
+              distanceFalloff={1.0}
+              intensity={1.2}
+              quality="medium"
+              halfRes
             />
+            <DepthOfField target={[0, 0, 0]} focalLength={0.08} bokehScale={1.1} height={480} />
           </EffectComposer>
         )}
       </Canvas>
