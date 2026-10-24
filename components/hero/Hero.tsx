@@ -1,6 +1,12 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+  useMotionValue,
+  useTransform,
+} from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -26,6 +32,14 @@ const swiftEase = [0.65, 0, 0.35, 1] as const;
 // Card inset from the viewport edge, and its corner radius
 const HERO_INSET = "clamp(16px, 1.6vw, 24px)";
 const HERO_RADIUS = "clamp(18px, 1.8vw, 26px)";
+
+// Scroll distance the pinned card is held for. The extra 70svh past the card's
+// own height is the travel that drives the shrink.
+const HERO_SCROLL_RANGE = "170svh";
+
+// Progress at which the pin releases (the container is 170svh tall and the
+// pinned card is 100svh, so 70/170 of the exit is the pinned phase).
+const PIN_END = 70 / 170;
 
 // ─── letter entrance ──────────────────────────────────────────────────────────
 
@@ -78,6 +92,37 @@ export default function Hero() {
   const [paused, setPaused] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // ─── scroll-linked card transition ──────────────────────────────────────────
+  const scrollRangeRef = useRef<HTMLDivElement>(null);
+  // Progress through the hero's exit, 0 → 1. Measured directly off the
+  // container rather than useScroll({ target }): with a sticky child, that
+  // hook's measurement proved unreliable here, handing derived values
+  // whole-page progress instead of the container's.
+  const progress = useMotionValue(0);
+
+  useEffect(() => {
+    const el = scrollRangeRef.current;
+    if (!el || reduced) return;
+
+    const update = () => {
+      const travel = el.offsetHeight;
+      const scrolled = -el.getBoundingClientRect().top;
+      progress.set(travel <= 0 ? 0 : Math.min(1, Math.max(0, scrolled / travel)));
+    };
+
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [progress, reduced]);
+
+  // Shrink finishes as the pin releases, then the card scrolls away normally.
+  const cardScale = useTransform(progress, [0, PIN_END], [1, 0.88]);
+  const cardRadius = useTransform(progress, [0, PIN_END], [22, 44]);
+
   // Cycle labels every LABEL_DWELL ms, pause on hover
   useEffect(() => {
     if (paused) return;
@@ -90,138 +135,153 @@ export default function Hero() {
   }, [paused]);
 
   return (
-    // The page frame: the card is inset from the viewport, and this shade
-    // showing through the gap is what makes it read as a framed object.
-    <div style={{ background: colors.scene.page, padding: HERO_INSET }}>
-      <section
-        id="home"
+    // Taller than the card so the pinned card has travel to animate over.
+    <div ref={scrollRangeRef} style={{ height: reduced ? undefined : HERO_SCROLL_RANGE }}>
+      {/* The page frame: the card is inset from the viewport, and this shade
+          showing through the gap is what makes it read as a framed object.
+          Pinned, so the next section rises over the card rather than pushing it. */}
+      <div
         style={{
-          position: "relative",
-          height: `calc(100svh - 2 * ${HERO_INSET})`,
-          overflow: "hidden",
-          background: colors.scene.bg,
-          borderRadius: HERO_RADIUS,
-          border: `1px solid ${colors.border.subtle}`,
-          boxShadow: shadow.card,
+          position: reduced ? "relative" : "sticky",
+          top: 0,
+          height: "100svh",
+          background: colors.scene.page,
+          padding: HERO_INSET,
+          boxSizing: "border-box",
         }}
       >
-      {/* Layer 0 — animated background */}
-      <HeroSpheres />
-
-      {/* Layer 10 — hero content */}
-      <div style={{ position: "relative", zIndex: 10, height: "100%" }}>
-
-        {/* Top-left: signature — scrolls away with the hero, not fixed */}
-        <div
-          className="hero-signature"
-          style={{ position: "absolute", top: "24px", left: "24px", opacity: 0.8, mixBlendMode: "multiply" }}
-        >
-          <Image
-            src="/portfolioicon.png"
-            alt="Eric Huang"
-            width={100}
-            height={100}
-            style={{ width: "100px", height: "auto", display: "block" }}
-            priority
-          />
-        </div>
-        <style>{`
-          @media (max-width: 767px) { .hero-signature { display: none; } }
-        `}</style>
-
-        {/* Top-right: portfolio datestamp — hidden on mobile, Header takes that space */}
-        <div
-          className="hero-datestamp"
-          style={{ position: "absolute", top: "2rem", right: "2.5rem" }}
-        >
-          <span className="text-mono-label" style={{ color: colors.text.muted }}>
-            Portfolio&nbsp;/&nbsp;2026
-          </span>
-        </div>
-        <style>{`
-          @media (max-width: 767px) { .hero-datestamp { display: none; } }
-        `}</style>
-
-        {/* Lower-left: name + cycling label */}
-        <div
+        <motion.section
+          id="home"
           style={{
-            position: "absolute",
-            bottom: "20%",
-            left: "8%",
+            position: "relative",
+            height: `calc(100svh - 2 * ${HERO_INSET})`,
+            overflow: "hidden",
+            background: colors.scene.bg,
+            border: `1px solid ${colors.border.subtle}`,
+            boxShadow: shadow.card,
+            ...(reduced
+              ? { borderRadius: HERO_RADIUS }
+              : { scale: cardScale, borderRadius: cardRadius }),
           }}
         >
-          {/* Name — letter-by-letter entrance */}
-          <div style={{ overflow: "visible" }}>
-            <motion.h1
-              className="text-display-xl"
-              style={{
-                color: colors.text.primary,
-                lineHeight: 0.9,
-                display: "flex",
-                flexWrap: "wrap",
-                // Clip letters rising from below
-              }}
-              variants={reduced ? undefined : nameContainerVariants}
-              initial={reduced ? false : "hidden"}
-              animate="visible"
-              aria-label={NAME}
+          {/* Layer 0 — animated background */}
+          <HeroSpheres />
+
+          {/* Layer 10 — hero content */}
+          <div style={{ position: "relative", zIndex: 10, height: "100%" }}>
+
+            {/* Top-left: signature — scrolls away with the hero, not fixed */}
+            <div
+              className="hero-signature"
+              style={{ position: "absolute", top: "24px", left: "24px", opacity: 0.8, mixBlendMode: "multiply" }}
             >
-              {LETTERS.map((char, i) => (
-                <span
-                  key={i}
+              <Image
+                src="/portfolioicon.png"
+                alt="Eric Huang"
+                width={100}
+                height={100}
+                style={{ width: "100px", height: "auto", display: "block" }}
+                priority
+              />
+            </div>
+            <style>{`
+              @media (max-width: 767px) { .hero-signature { display: none; } }
+            `}</style>
+
+            {/* Top-right: portfolio datestamp — hidden on mobile, Header takes that space */}
+            <div
+              className="hero-datestamp"
+              style={{ position: "absolute", top: "2rem", right: "2.5rem" }}
+            >
+              <span className="text-mono-label" style={{ color: colors.text.muted }}>
+                Portfolio&nbsp;/&nbsp;2026
+              </span>
+            </div>
+            <style>{`
+              @media (max-width: 767px) { .hero-datestamp { display: none; } }
+            `}</style>
+
+            {/* Lower-left: name + cycling label */}
+            <div
+              style={{
+                position: "absolute",
+                bottom: "20%",
+                left: "8%",
+              }}
+            >
+              {/* Name — letter-by-letter entrance */}
+              <div style={{ overflow: "visible" }}>
+                <motion.h1
+                  className="text-display-xl"
                   style={{
-                    display: "inline-block",
-                    // Preserve space character width
-                    whiteSpace: char === " " ? "pre" : undefined,
+                    color: colors.text.primary,
+                    lineHeight: 0.9,
+                    display: "flex",
+                    flexWrap: "wrap",
+                    // Clip letters rising from below
                   }}
+                  variants={reduced ? undefined : nameContainerVariants}
+                  initial={reduced ? false : "hidden"}
+                  animate="visible"
+                  aria-label={NAME}
                 >
-                  {reduced ? (
-                    char
-                  ) : (
-                    <motion.span
-                      variants={letterVariants}
-                      style={{ display: "inline-block" }}
+                  {LETTERS.map((char, i) => (
+                    <span
+                      key={i}
+                      style={{
+                        display: "inline-block",
+                        // Preserve space character width
+                        whiteSpace: char === " " ? "pre" : undefined,
+                      }}
                     >
-                      {char}
-                    </motion.span>
-                  )}
-                </span>
-              ))}
-            </motion.h1>
-          </div>
+                      {reduced ? (
+                        char
+                      ) : (
+                        <motion.span
+                          variants={letterVariants}
+                          style={{ display: "inline-block" }}
+                        >
+                          {char}
+                        </motion.span>
+                      )}
+                    </span>
+                  ))}
+                </motion.h1>
+              </div>
 
-          {/* Cycling label */}
-          <div
-            style={{
-              marginTop: "0.75rem",
-              // Fixed height = text-display-md at clamp(2rem,5vw,3.5rem) × line-height 1
-              // Use a generous px value so the clip never cuts the ascenders
-              height: "4rem",
-              overflow: "hidden",
-              position: "relative",
-            }}
-            onMouseEnter={() => setPaused(true)}
-            onMouseLeave={() => setPaused(false)}
-          >
-            <AnimatePresence mode="popLayout" initial={false}>
-              <motion.p
-                key={LABELS[labelIndex]}
-                className="text-display-md"
-                style={{ color: colors.text.secondary, margin: 0 }}
-                initial={reduced ? false : labelEnter}
-                animate={labelCenter}
-                exit={reduced ? undefined : labelExit}
+              {/* Cycling label */}
+              <div
+                style={{
+                  marginTop: "0.75rem",
+                  // Fixed height = text-display-md at clamp(2rem,5vw,3.5rem) × line-height 1
+                  // Use a generous px value so the clip never cuts the ascenders
+                  height: "4rem",
+                  overflow: "hidden",
+                  position: "relative",
+                }}
+                onMouseEnter={() => setPaused(true)}
+                onMouseLeave={() => setPaused(false)}
               >
-                {LABELS[labelIndex]}
-              </motion.p>
-            </AnimatePresence>
-          </div>
-        </div>
+                <AnimatePresence mode="popLayout" initial={false}>
+                  <motion.p
+                    key={LABELS[labelIndex]}
+                    className="text-display-md"
+                    style={{ color: colors.text.secondary, margin: 0 }}
+                    initial={reduced ? false : labelEnter}
+                    animate={labelCenter}
+                    exit={reduced ? undefined : labelExit}
+                  >
+                    {LABELS[labelIndex]}
+                  </motion.p>
+                </AnimatePresence>
+              </div>
+            </div>
 
-        {/* Bottom-center: scroll cue */}
-        <ScrollCue />
-        </div>
-      </section>
+            {/* Bottom-center: scroll cue */}
+            <ScrollCue />
+              </div>
+        </motion.section>
+      </div>
     </div>
   );
 }
