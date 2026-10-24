@@ -24,7 +24,30 @@ export const colors = {
     subtle: "rgba(0, 0, 0, 0.08)",
     strong: "rgba(0, 0, 0, 0.16)",
   },
+  // Hero sphere scene — near-black stage with a warm key and a cool rim
+  scene: {
+    bg: "#08070C",
+    key: "#FFEFD6",
+    rim: "#8FB4FF",
+  },
+  // Text sitting on top of the dark hero scene (AA or better on scene.bg)
+  onDark: {
+    primary: "#F2F0ED",
+    secondary: "#A8A49E",
+    muted: "#8A857E",
+  },
 } as const;
+
+// ---------------------------------------------------------------------------
+// Hero sphere palette — rich but muted; each sphere drifts through the ring
+// ---------------------------------------------------------------------------
+export const spherePalette = [
+  "#6E1F49", // deep magenta
+  "#1D3576", // cobalt
+  "#0F544F", // teal
+  "#8A6115", // amber
+  "#4A2857", // plum
+] as const;
 
 // ---------------------------------------------------------------------------
 // Easing curves

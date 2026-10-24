@@ -193,6 +193,11 @@ Always check this folder before building anything new. If the user references a 
 - Below-the-fold sections are dynamically imported when reasonable
 - No client components above what's needed — keep server components as the default
 - Total JS bundle target: under 250kb gzipped
+  - **Documented exception — the hero sphere scene.** `components/hero/HeroSpheres.tsx`
+    pulls in three.js, React Three Fiber, Rapier (WASM) and postprocessing, which
+    together far exceed this budget. It is `next/dynamic` with `ssr: false`, so it
+    stays off the initial route payload and loads after first paint. The 250kb
+    target still applies to everything else.
 
 ### Accessibility
 - Every interactive element has a visible focus ring on `:focus-visible`
