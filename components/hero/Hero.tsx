@@ -5,7 +5,7 @@ import { ChevronDown } from "lucide-react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { colors, easing } from "@/lib/tokens";
+import { colors, easing, shadow } from "@/lib/tokens";
 
 // WebGL + physics + WASM: kept off the initial payload and out of SSR.
 const HeroSpheres = dynamic(() => import("./HeroSpheres"), {
@@ -22,6 +22,10 @@ const LABEL_DWELL = 2400; // ms each label stays visible
 
 const expoEase = [0.16, 1, 0.3, 1] as const;
 const swiftEase = [0.65, 0, 0.35, 1] as const;
+
+// Card inset from the viewport edge, and its corner radius
+const HERO_INSET = "clamp(16px, 1.6vw, 24px)";
+const HERO_RADIUS = "clamp(18px, 1.8vw, 26px)";
 
 // ─── letter entrance ──────────────────────────────────────────────────────────
 
@@ -86,15 +90,21 @@ export default function Hero() {
   }, [paused]);
 
   return (
-    <section
-      id="home"
-      style={{
-        position: "relative",
-        height: "100svh",
-        overflow: "hidden",
-        background: colors.scene.bg,
-      }}
-    >
+    // The page frame: the card is inset from the viewport, and this shade
+    // showing through the gap is what makes it read as a framed object.
+    <div style={{ background: colors.scene.page, padding: HERO_INSET }}>
+      <section
+        id="home"
+        style={{
+          position: "relative",
+          height: `calc(100svh - 2 * ${HERO_INSET})`,
+          overflow: "hidden",
+          background: colors.scene.bg,
+          borderRadius: HERO_RADIUS,
+          border: `1px solid ${colors.border.subtle}`,
+          boxShadow: shadow.card,
+        }}
+      >
       {/* Layer 0 — animated background */}
       <HeroSpheres />
 
@@ -210,8 +220,9 @@ export default function Hero() {
 
         {/* Bottom-center: scroll cue */}
         <ScrollCue />
-      </div>
-    </section>
+        </div>
+      </section>
+    </div>
   );
 }
 

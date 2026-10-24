@@ -32,6 +32,9 @@ export const colors = {
     // Occlusion tint: warm, so contact shadows sit in the same family as the
     // stage instead of greying the pastels toward dirt.
     ao: "#9A8F80",
+    // The page behind the hero card — same family, a shade down from the card
+    // so the card's edge is readable without a heavy border.
+    page: "#ECE7DF",
   },
 } as const;
 
@@ -48,6 +51,13 @@ export const spherePalette = [
   "#F8BE96", // peach
   "#F5DE8E", // butter yellow
 ] as const;
+
+// ---------------------------------------------------------------------------
+// Shadows — warm-tinted, offset rather than a blur halo
+// ---------------------------------------------------------------------------
+export const shadow = {
+  card: "0 1px 2px rgba(58, 48, 36, 0.05), 0 16px 40px rgba(58, 48, 36, 0.08)",
+} as const;
 
 // ---------------------------------------------------------------------------
 // Easing curves
