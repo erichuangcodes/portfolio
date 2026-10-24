@@ -39,9 +39,12 @@ export const colors = {
 } as const;
 
 // ---------------------------------------------------------------------------
-// Hero sphere palette — pastels with enough saturation to hold against white.
+// Hero sphere palette — APPROVED LOOK, do not darken or desaturate.
+//
 // Each sphere blends two neighbouring entries across its surface and drifts
-// slowly around the ring, so the range never leaves pastel.
+// slowly around the ring, so the range never leaves pastel. These read as
+// pastel only because the hero lighting is bright and un-occluded — see the
+// APPROVED LOOK note in components/hero/HeroSpheres.tsx before changing either.
 // ---------------------------------------------------------------------------
 export const spherePalette = [
   "#B9A7F0", // lavender

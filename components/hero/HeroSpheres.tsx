@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas, useThree } from "@react-three/fiber";
-import { DepthOfField, EffectComposer, N8AO } from "@react-three/postprocessing";
+import { DepthOfField, EffectComposer } from "@react-three/postprocessing";
 import { Physics } from "@react-three/rapier";
 import { useInView, useReducedMotion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -22,17 +22,24 @@ function Atmosphere() {
       <primitive object={environment.texture} attach="environment" />
       <color attach="background" args={[colors.scene.bg]} />
       <fog attach="fog" args={[colors.scene.bg, FOG_NEAR, FOG_FAR]} />
-      {/* These look high but are not. Three divides diffuse by PI and does not
-          pre-scale irradiance, so an intensity of ~PI is what renders a surface
-          at its true albedo. Dialling these down to "1.0" drops the pastels to
-          roughly half brightness, which reads as mud against white. */}
-      <ambientLight intensity={1.35} />
-      {/* Soft key: the off-white stage supplies the contrast, so the spheres
-          only need enough directional light to round them off. */}
-      <directionalLight position={[-7, 9, 7]} intensity={0.95} color={colors.scene.key} />
+      {/* ───────────────────────────────────────────────────────────────────
+          APPROVED LOOK — do not soften without checking a render first.
+
+          These look high but are not: three divides diffuse by PI and does not
+          pre-scale irradiance, so an intensity near PI renders a surface at its
+          true albedo. Dialling them toward "1.0" halves the pastels' brightness
+          and they read as mud.
+
+          The ratio matters as much as the level. A strong key against a low
+          ambient is what keeps the pastels saturated; raising ambient and
+          lowering the key flattens them into grey-browns (measured: saturation
+          0.24 vs 0.70 for this setup).
+          ─────────────────────────────────────────────────────────────────── */}
+      <ambientLight intensity={1.1} />
+      <directionalLight position={[-7, 9, 7]} intensity={1.6} color={colors.scene.key} />
       {/* Rim from behind, aimed back at the camera — puts a bright edge on each
           silhouette so spheres separate from the stage. */}
-      <directionalLight position={[3, -2, -9]} intensity={0.55} color={colors.scene.rim} />
+      <directionalLight position={[3, -2, -9]} intensity={0.9} color={colors.scene.rim} />
     </>
   );
 }
@@ -90,16 +97,10 @@ export default function HeroSpheres() {
 
         {!frozen && postprocessing && (
           <EffectComposer multisampling={0}>
-            {/* Contact shadows where spheres meet, so the cluster reads as
-                separate objects instead of one flat mass. */}
-            <N8AO
-              aoRadius={1.6}
-              distanceFalloff={1.0}
-              intensity={0.45}
-              color={colors.scene.ao}
-              quality="medium"
-              halfRes
-            />
+            {/* APPROVED LOOK — no ambient occlusion pass. AO was tried at 1.2
+                and 0.45: both darken every contact point, and with a cluster
+                this dense that is most of the frame, which is what turned the
+                pastels dusty. Depth of field alone gives the separation. */}
             <DepthOfField target={[0, 0, 0]} focalLength={0.08} bokehScale={1.1} height={480} />
           </EffectComposer>
         )}

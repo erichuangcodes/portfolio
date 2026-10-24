@@ -211,7 +211,7 @@ export default function SphereField({ count, frozen }: Props) {
         clearcoatRoughness={0.55}
         sheen={0.9}
         sheenRoughness={0.6}
-        envMapIntensity={1.15}
+        envMapIntensity={1.0}
       />
     </instancedMesh>
   );
