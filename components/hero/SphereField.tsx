@@ -207,7 +207,7 @@ export default function SphereField({ count, frozen }: Props) {
       args={[undefined, undefined, count]}
       frustumCulled={false}
     >
-      <sphereGeometry args={[1, 28, 18]}>
+      <sphereGeometry args={[1, 64, 48]}>
         {/* Attached declaratively so it lands on this geometry — setting it
             imperatively races R3F attaching the geometry to the mesh, and a
             missing attribute reads as black in the shader. */}

@@ -139,7 +139,9 @@ export default function HeroSpheres({ paused = false }: Props) {
         // (Setting gl.toneMapping directly does not work — R3F overwrites it.)
         flat
         gl={{
-          antialias: false,
+          // Covers the direct-render path (phones and reduced motion skip the
+          // composer); the composer has its own multisampling below.
+          antialias: true,
           powerPreference: "high-performance",
           }}
       >
@@ -155,7 +157,7 @@ export default function HeroSpheres({ paused = false }: Props) {
         )}
 
         {!frozen && postprocessing && (
-          <EffectComposer multisampling={0}>
+          <EffectComposer multisampling={4}>
             {/* APPROVED LOOK — contact shadows where spheres meet, so the
                 cluster reads as separate objects instead of one flat mass.
                 intensity 0.45 with the warm `ao` tint is the approved level;
