@@ -3,7 +3,7 @@
 Notes for a fresh Claude Code session. Read this before you touch anything,
 and read `CLAUDE.md` too, since it is loaded automatically. Where the two
 disagree, this file reflects what the code does right now (as of 2026-10-24,
-commit `c265f3a`).
+commit `7cf2a50`).
 
 ---
 
@@ -50,7 +50,7 @@ should work.
 | 0 | Fixed pill nav (Home / Projects / Experience / Contact) | `components/layout/Header.tsx` (mounted in `app/layout.tsx`) | Works. It is a plain pill for now; the liquid-glass version is still to do. No "About" link yet. |
 | 1 | Hero: inset card with the 3D sphere scene, name, rotating role, signature, datestamp, scroll cue | `components/hero/Hero.tsx`, plus the scene files in `components/hero/` | Scene **done and approved**. Text styling is **in progress** (still the pre-sphere styling). Scroll transition is **in progress** (see section 3). |
 | — | About | — | **Does not exist.** It is the next thing to build after the hero. Right now the Projects section is what rises into view as the hero exits. |
-| 2 | Projects: "Selected Work" heading and a 3D rotating carousel | `app/page.tsx` (the heading), `components/projects/ProjectsCarousel.tsx`, data in `lib/projects.ts` | Works. **Placeholder images:** every project has `heroImage: null`, so cards show a gradient placeholder. Some section images are wired up (Aerio); photos sit in `public/projects/`. |
+| 2 | Projects: "Selected Work" label, headline "From CAD model / to the real thing.", curved carousel | `app/page.tsx` (heading), `components/projects/CurvedCarousel.tsx` and friends (see "Projects carousel" below), data in `lib/projects.ts` | **Done** (2026-10-24, reviewed over 3 rounds, PASS). Still to check in a real browser: colour/feel, real trackpad and touch. 3 of 6 projects have a cover image; the rest show a placeholder. |
 | 3 | Experience | `components/sections/Experience.tsx`, data in `lib/experience.ts` | Done (content comes from `inspirations/resume.md`). |
 | 4 | Contact | `components/sections/Contact.tsx` | Done, but it has one lint error (see section 4). |
 | — | Project detail pages `/projects/[slug]` | `app/projects/[slug]/page.tsx`, `components/projects/ProjectDetail.tsx` | Work, with placeholder hero images. |
@@ -68,6 +68,8 @@ for later): `components/gallery6.tsx`, `components/glassmorphism-trust-hero.tsx`
 
 | Commit | Summary |
 |---|---|
+| `0268930`…`7cf2a50` | New curved projects carousel (13 commits: geometry helper, carousel, wheel, hover, swap-in and old-carousel removal, then review fixes). See the "Projects carousel" section. |
+| `b2e5fb9` | Added these handoff notes. |
 | `c265f3a` | Hero stage background set to pure white `#FFFFFF`. The earlier `#00000000` was a slip and was meant to be white. The transparent-clear handling was removed. |
 | `ec71d50` | Adopted the user's panel-tuned values: ambient 3, key 1.6, rim 1.85, envMap 1.5, AO 0.5, fog 0→160, centre pull 0.75. |
 | `6fdf2a7` | Added the dev-only Leva tuning panel (`SceneTuner.tsx`) and the live store (`scene-controls.ts`). |
@@ -81,7 +83,8 @@ for later): `components/gallery6.tsx`, `components/glassmorphism-trust-hero.tsx`
 | `bc9dc65` | Replaced the CSS blob background with the 3D sphere scene. |
 
 ### Uncommitted / half-finished
-- The working tree was clean before this file was added.
+- Untracked on purpose: `inspirations/carouselimage.png` (the carousel reference image)
+  and `reference/projects-review.md` (the review findings, with a summary for Eric at the top).
 - Half-finished: the hero text restyle, the scroll-out transition (it doesn't
   match the intended design yet), the About section, the liquid-glass nav and
   the real project photos. Section 7 covers all of these.
@@ -263,6 +266,65 @@ those files, fix the comments to match, but don't change the values.
 
 ---
 
+## 3b. Projects carousel (added 2026-10-24)
+
+The curved carousel replaces the old `ProjectsCarousel.tsx`, which has been deleted.
+The spec is `reference/projects-plan.md`. The review and the summary for Eric are in
+`reference/projects-review.md`. The target look is `inspirations/carouselimage.png`.
+
+**Files**
+| File | Role |
+|---|---|
+| `components/projects/CurvedCarousel.tsx` | Container. Owns the single `position` MotionValue (in card units), measures with a ResizeObserver, and handles drag with velocity snapping, click-vs-drag, keys, focus, the prev/next buttons and the live region. |
+| `components/projects/CarouselSlide.tsx` | Derives one card's transform and opacity from `position` with `useTransform`, so nothing re-renders per frame. |
+| `components/projects/ProjectCard.tsx` | Image, title and year. Spotlight sheen plus tilt of up to 3° on hover, only for `(hover: hover) and (pointer: fine)`. Shows a placeholder when there's no image. |
+| `components/projects/carousel-geometry.ts` | All geometry and tuning constants: `computeGeometry` and `slidePose`. |
+| `hooks/useHorizontalWheel.ts` | Axis-locked wheel handling. It consumes horizontal gestures and stops them before Lenis sees them. Vertical scrolling always reaches the page. |
+| `lib/projects.ts` | `getCoverImage(p)` returns `heroImage`, else the first section image, else `null`. |
+| `lib/tokens.ts` | Added `bezier` (easing tuples for framer-motion) and `colors.overlay.spotlight`. No existing value changed. |
+
+**How it works:** it's a real CSS 3D concave cylinder. The perspective equals the radius,
+so the camera sits on the cylinder's axis and the apparent scale is `1/cos θ`: the centre
+card is flat and smallest, and the edges are taller. Each card is placed with
+`translateZ(R) rotateY(−θ) translateZ(−R)`. The strip loops, with a fallback to a finite
+strip if there are too few projects. Card width interpolates smoothly with container
+width (`CARD_WIDTH_STOPS`: 74% of the width on phones, 296px at 400, 317px at 1440,
+400px at 1920). The curve strength `EDGE_ANGLE_DEG` goes from 26° to 50°, and the gap
+and edge mask also ease between 480 and 1280px. Cards dim toward the edges, and their
+title row fades out before the image does. Only transform and opacity animate.
+
+**Interaction rules:**
+- A swipe counts snap steps from the card the drag started on: 1 card for a normal
+  swipe, at most 2 for a flick.
+- Clicking a side card centres it. Clicking the card the strip is resting on opens
+  `/projects/[slug]`. A click during a snap never opens a project. Keyboard Enter opens
+  the focused card.
+- Arrow keys work only with focus inside the carousel. Home and End jump to the first
+  and last project.
+- Reduced motion gives a flat 2D strip with instant moves and no hover effects.
+
+**Decisions made without Eric (listed in the review file):**
+- The headline is left-aligned, because CLAUDE.md bans centred section layouts.
+- `heroImage` stays unset. The source images are 850px or smaller, so they'd look soft
+  as detail-page heroes.
+- The section stays pure white, as before, which matches the reference.
+- No 21st.dev code was copied. The Spotlight Card license is unknown, and the Tilted
+  Grid Hero source is behind a login.
+
+**Open items:**
+- Colour and feel, real trackpad gestures (including the back-swipe), real touch, and
+  Safari/Firefox are all unverified. Only headless Edge was used.
+- N1: 1440 shows 3 full cards plus slivers. This is a look call; tune it with
+  `CARD_WIDTH_STOPS` and `EDGE_ANGLE_DEG.wide`.
+- N2: at 450–640px the neighbours' half-faded titles are cut off at the screen edges.
+- 3 of 6 projects (desk, keyboard, bonsyfilms) have no photos yet. The covers that do
+  exist are low resolution.
+- In dev, the Leva panel covers the carousel at 375px. Hide it when testing at that width.
+- `components/ui/carousel.tsx` and `embla-carousel-react` are now only used by the unused
+  `gallery6.tsx`.
+
+---
+
 ## 4. Known issues
 
 - **Hydration warning with prefers-reduced-motion** (`Hero.tsx`, the name
@@ -365,9 +427,10 @@ those files, fix the comments to match, but don't change the values.
    refraction in Chromium (SVG displacement filter via `backdrop-filter: url()`)
    and a frosted `backdrop-filter: blur()` fallback in Safari and Firefox.
    Update `NAV_CLEARANCE` in `Hero.tsx` if the nav size changes.
-4. **Add real project photos** to the projects carousel: set `heroImage` in
-   `lib/projects.ts`. Photos already exist in `public/projects/` for several
-   projects.
+4. **Add real project photos** to the projects carousel. Cards use
+   `getCoverImage` (`heroImage`, then the first section image). The desk, keyboard
+   and bonsyfilms projects still have no photos. Higher-resolution covers would also
+   help (the current ones are 850px or smaller).
 5. **Add other 21st.dev components** one at a time, and only where each has a
    clear place. Check each one's license first. Candidates are already sitting
    unused in `components/` and `inspirations/`. Adapt them to the design
