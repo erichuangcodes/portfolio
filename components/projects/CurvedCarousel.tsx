@@ -38,6 +38,8 @@ const FLICK_PROJECTION = 0.2;
 /** Flick speed (cards/s) that always advances at least one card. */
 const FLICK_MIN_VELOCITY = 0.6;
 const MAX_FLICK_CARDS = 2;
+/** Distance (card units) from the target below which the strip counts as at rest. */
+const REST_EPSILON = 0.001;
 /** Drag resistance past the ends in finite (non-looping) mode. */
 const RUBBER_BAND = 0.3;
 const SNAP_SPRING = { type: "spring", stiffness: 220, damping: 32, mass: 1, restDelta: 0.001 } as const;
@@ -72,6 +74,12 @@ export default function CurvedCarousel() {
   const panActiveRef = useRef(false);
   /** The current press stopped a snap animation part-way. */
   const interruptedRef = useRef(false);
+  /**
+   * The card the strip was resting on when the current press began, or null
+   * if it was moving; undefined when no press preceded the click. A pointer
+   * click only navigates when it lands on this card.
+   */
+  const pressRestIndexRef = useRef<number | null | undefined>(undefined);
   /** A wheel scrub has moved the strip since the last commit. */
   const scrubbingRef = useRef(false);
   const stageId = useId();
@@ -150,7 +158,8 @@ export default function CurvedCarousel() {
   const handlePointerDownCapture = () => {
     movedRef.current = false;
     panActiveRef.current = false;
-    if (position.get() !== targetRef.current) {
+    pressRestIndexRef.current = restingIndexNow();
+    if (pressRestIndexRef.current === null) {
       animRef.current?.stop();
       interruptedRef.current = true;
     }
@@ -217,16 +226,29 @@ export default function CurvedCarousel() {
   });
 
   // ── card links ────────────────────────────────────────────────────────────
+  const restingIndexNow = () =>
+    Math.abs(position.get() - targetRef.current) < REST_EPSILON ? mod(targetRef.current, COUNT) : null;
+
   const handleSelect = (index: number, e: MouseEvent<HTMLAnchorElement>) => {
-    // A keyboard-initiated click (detail 0) can never be the tail of a drag.
-    if (e.detail !== 0 && movedRef.current) {
-      e.preventDefault();
+    // A keyboard-initiated click (detail 0) activates the focused link, which
+    // focus has already made the target, so it can't open a different card.
+    if (e.detail === 0) {
+      if (index !== mod(targetRef.current, COUNT)) {
+        e.preventDefault();
+        goTo(index, "tween");
+      }
       return;
     }
-    // targetRef, not activeIndex: a settle on pointerup may have just moved it.
-    if (index !== mod(targetRef.current, COUNT)) {
+    // A pointer click navigates only if the strip was at rest on this very
+    // card when the press began. Mid-snap, or on any other card, it centres
+    // the clicked card instead, so it never opens a card other than the one
+    // under the pointer.
+    const pressed = pressRestIndexRef.current;
+    const restIndex = pressed === undefined ? restingIndexNow() : pressed;
+    pressRestIndexRef.current = undefined;
+    if (movedRef.current || restIndex !== index) {
       e.preventDefault();
-      goTo(index, "tween");
+      if (!movedRef.current) goTo(index, "tween");
     }
   };
 
