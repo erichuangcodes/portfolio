@@ -50,11 +50,8 @@ export default function ToolsBand() {
   const duration = `${(items.length * SECONDS_PER_ITEM).toFixed(1)}s`;
 
   return (
-    <section
-      aria-label={heading ?? "Tools"}
-      className="pb-4 md:pb-8"
-      style={{ background: colors.bg.secondary }}
-    >
+    // Sits inside the Projects section, so the parent owns spacing and background.
+    <div role="group" aria-label={heading ?? "Tools"} style={{ marginBottom: "5rem" }}>
       {heading && (
         <p
           className="text-eyebrow"
@@ -147,7 +144,7 @@ export default function ToolsBand() {
           .tools-list[aria-hidden="true"] { display: none; }
         }
       `}</style>
-    </section>
+    </div>
   );
 }
 

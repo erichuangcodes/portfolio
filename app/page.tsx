@@ -14,8 +14,6 @@ export default function Home() {
 
       <About />
 
-      <ToolsBand />
-
       {/* ── Projects section ─────────────────────────────────────────────── */}
       <section
         id="projects"
@@ -29,7 +27,7 @@ export default function Home() {
           style={{
             paddingLeft:  "8%",
             paddingRight: "8%",
-            marginBottom: "5rem",
+            marginBottom: "3rem",
           }}
         >
           <h2
@@ -44,6 +42,7 @@ export default function Home() {
             Selected Work
           </h2>
         </div>
+        <ToolsBand />
         <CurvedCarousel />
       </section>
 

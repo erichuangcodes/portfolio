@@ -502,7 +502,7 @@ simple-icons slug) lives in `about.tools` in `lib/about.ts`.
 - **Text labels:** used for Fusion 360 (only a generic Autodesk logo exists),
   Inventor, Onshape and CapCut (not in simple-icons).
 - **Motion:** a CSS marquee. The list is rendered twice and the track slides
-  `-50%`, linearly, at about 1.8s per item. The band is capped at ~10 logos wide (48px marks, 32px on mobile), centred, with a wide 25% edge fade. No heading (`heading: null`) so it runs straight into Selected Work.
+  `-50%`, linearly, at about 1.8s per item. The band is capped at ~10 logos wide (48px marks, 32px on mobile), centred, with a wide 25% edge fade. No heading (`heading: null`). It now lives inside the Projects section, between the "Selected Work" h2 (3rem below it) and the carousel (5rem below the band); the section keeps its 8rem top/bottom padding.
 - **Pausing:** it pauses on hover (and shows the tool name in Geist) and when
   off-screen (`useInView`).
 - **Reduced motion:** a static row.
