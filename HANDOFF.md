@@ -49,7 +49,7 @@ should work.
 |---|---|---|---|
 | 0 | Fixed pill nav (Home / Projects / Experience / Contact) | `components/layout/Header.tsx` (mounted in `app/layout.tsx`) | Works. It is a plain pill for now; the liquid-glass version is still to do. No "About" link yet. |
 | 1 | Hero: inset card with the 3D sphere scene, name, rotating role, signature, datestamp, scroll cue | `components/hero/Hero.tsx`, plus the scene files in `components/hero/` | Scene **done and approved**. Text styling is **in progress** (still the pre-sphere styling). Scroll transition is **in progress** (see section 3). |
-| — | About | — | **Does not exist.** It is the next thing to build after the hero. Right now the Projects section is what rises into view as the hero exits. |
+| 1b | About | `components/sections/About.tsx`, content in `lib/about.ts` | Built 2026-10-25 with placeholder copy and photos. See section 3e. |
 | 2 | Projects: "Selected Work" label, headline "From CAD model / to the real thing.", curved carousel | `app/page.tsx` (heading), `components/projects/CurvedCarousel.tsx` and friends (see "Projects carousel" below), data in `lib/projects.ts` | **Done** (2026-10-24, reviewed over 3 rounds, PASS). Still to check in a real browser: colour/feel, real trackpad and touch. 3 of 6 projects have a cover image; the rest show a placeholder. |
 | 3 | Experience | `components/sections/Experience.tsx`, data in `lib/experience.ts` | Done (content comes from `inspirations/resume.md`). |
 | 4 | Contact | `components/sections/Contact.tsx` | Done, but it has one lint error (see section 4). |
@@ -380,6 +380,36 @@ JetBrains Mono was removed entirely.
 - Note: `CLAUDE.md` still says "Inter is the only font" and describes
   `text-mono-label`. Neither matches the code. Inter was never loaded; the
   body font is Geist.
+
+---
+
+## 3e. About section (added 2026-10-25)
+
+Sits between the hero and Projects (`app/page.tsx`). The hero's wrapper
+surface is now `bg.secondary`, the same as About, so the collapse hands off
+with no colour seam. Shrink timing is unchanged.
+
+**All editable content is in `lib/about.ts`:** greetings, paragraphs, photos,
+links and the song. The current copy is all marked PLACEHOLDER.
+
+| File | Role |
+|---|---|
+| `components/sections/About.tsx` | Two columns on desktop, stacked on mobile. Off-white, with a fade/slide-in on scroll. |
+| `components/sections/TypingGreeting.tsx` | Fraunces headline in `accent.deep` (#5B47B8, about 6.6:1). Types and deletes through the greetings with a blinking cursor. Reduced motion shows the first greeting, static. |
+| `components/sections/PhotoViewer.tsx` | Fixed 4:5 frame with arrows overlaid, crossfade, swipe, arrow keys when focused, wraps, and a `n / total` counter. Shows a pastel placeholder when `src` is null. |
+| `components/sections/MusicWidget.tsx` | "On repeat lately" card with 30 CSS-animated equaliser bars in a palette gradient. Paused off-screen and static for reduced motion. Below 480px the bars wrap onto their own row. |
+
+**Nav changes:**
+- "Home" is now a house icon. The link has `aria-label="Home"`.
+- New "About" link to `/#about`. The active dot tracks it.
+- The mobile menu still shows "Home" as text.
+
+**Open items:**
+- `/public/about/` is empty, so the viewer shows 4 placeholders.
+- `/public/resume.pdf` doesn't exist, so the resume link 404s until it's added.
+- The second link (LinkedIn) is hidden until its `href` is set.
+- The prompt said Inter for body text, but the site's body font is Geist, so
+  About uses Geist.
 
 ---
 

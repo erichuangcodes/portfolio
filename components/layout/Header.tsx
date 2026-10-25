@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { House, Menu, X } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -18,6 +18,7 @@ const NavGlassTuner = DEV_TUNING
 
 const NAV_LINKS = [
   { label: "Home",       href: "/",           sectionId: "home"       },
+  { label: "About",      href: "/#about",     sectionId: "about"      },
   { label: "Projects",   href: "/#projects",  sectionId: "projects"   },
   { label: "Experience", href: "/#experience",sectionId: "experience" },
   { label: "Contact",    href: "/#contact",   sectionId: "contact"    },
@@ -86,6 +87,7 @@ function NavLink({
       href={href}
       onClick={onClick}
       aria-current={isActive ? "true" : undefined}
+      aria-label={href === "/" ? "Home" : undefined}
       className="nav-link"
       style={{
         position:       "relative",
@@ -124,7 +126,11 @@ function NavLink({
           />
         )}
       </span>
-      {label}
+      {href === "/" ? (
+        <House size={15} strokeWidth={isActive ? 2 : 1.5} aria-hidden="true" />
+      ) : (
+        label
+      )}
     </Link>
   );
 }

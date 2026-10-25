@@ -156,12 +156,12 @@ export default function Hero() {
   }, [paused]);
 
   return (
-    // One screen tall, no extra scroll distance. White behind the card, the
-    // same as the next section, so the collapse hands straight off to it.
+    // One screen tall, no extra scroll distance. The surface behind the card
+    // matches the About section, so the collapse hands straight off to it.
     <div
       ref={wrapperRef}
       className="relative h-svh"
-      style={{ background: colors.bg.primary }}
+      style={{ background: colors.bg.secondary }}
     >
       {ScrollTuner ? <ScrollTuner /> : null}
       <div className="h-full">

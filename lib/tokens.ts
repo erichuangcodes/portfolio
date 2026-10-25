@@ -18,6 +18,9 @@ export const colors = {
   accent: {
     // TODO: verify exact hex against antimetal.com via DevTools before shipping
     primary: "#edd97e",
+    // Deep lavender from the sphere palette, dark enough for text on the
+    // off-white (about 6.6:1 on bg.secondary).
+    deep: "#5B47B8",
     glow: "rgba(126, 181, 237, 0.15)",
   },
   border: {

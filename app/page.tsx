@@ -1,4 +1,5 @@
 import Hero from "@/components/hero/Hero";
+import About from "@/components/sections/About";
 import CurvedCarousel from "@/components/projects/CurvedCarousel";
 import Experience from "@/components/sections/Experience";
 import Contact from "@/components/sections/Contact";
@@ -10,9 +11,9 @@ export default function Home() {
     <main>
       <Hero />
 
+      <About />
+
       {/* ── Projects section ─────────────────────────────────────────────── */}
-      {/* No reveal wrapper: this section follows the hero's shrink-to-speck
-          and should simply scroll up behind it. */}
       <section
         id="projects"
         style={{
