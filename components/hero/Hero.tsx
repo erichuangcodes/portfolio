@@ -10,9 +10,9 @@ import {
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { colors, easing, shadow } from "@/lib/tokens";
+import { bezier, colors, shadow } from "@/lib/tokens";
+import { DEV_TUNING } from "@/lib/dev-tuning";
 import {
-  DEV_TUNING,
   collapseOpacity,
   collapseScale,
   useTransitionValues,
@@ -37,9 +37,6 @@ const LETTERS = NAME.split("");
 const LABELS = ["Engineer", "Designer", "Builder", "Filmmaker"] as const;
 const LABEL_DWELL = 2400; // ms each label stays visible
 
-const expoEase = [0.16, 1, 0.3, 1] as const;
-const swiftEase = [0.65, 0, 0.35, 1] as const;
-
 // Corner radius of the hero card in its own (unscaled) pixels. The card is
 // shrunk with a transform, so the rounding scales down in proportion with it.
 const HERO_RADIUS = "clamp(18px, 1.8vw, 26px)";
@@ -61,7 +58,7 @@ const letterVariants = {
   visible: {
     y: "0%",
     opacity: 1,
-    transition: { duration: 0.8, ease: expoEase },
+    transition: { duration: 0.8, ease: bezier.expo },
   },
 };
 
@@ -77,14 +74,14 @@ const labelCenter = {
   y: "0%",
   opacity: 1,
   filter: "blur(0px)",
-  transition: { duration: 0.5, ease: expoEase },
+  transition: { duration: 0.5, ease: bezier.expo },
 };
 
 const labelExit = {
   y: "-100%",
   opacity: 0,
   filter: "blur(8px)",
-  transition: { duration: 0.5, ease: expoEase },
+  transition: { duration: 0.5, ease: bezier.expo },
 };
 
 // ─── component ────────────────────────────────────────────────────────────────

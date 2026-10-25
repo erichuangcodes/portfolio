@@ -5,8 +5,6 @@
 
 import { useSyncExternalStore } from "react";
 
-/** Dev-only tuning panel. Statically replaced, so Leva tree-shakes out of prod. */
-export const DEV_TUNING = process.env.NODE_ENV === "development";
 
 // Progress runs 0 → 1 as the hero scrolls from filling the viewport to fully
 // above it. It scrolls normally until shrinkStart, then collapses to nothing.

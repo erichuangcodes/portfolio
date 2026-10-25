@@ -5,9 +5,9 @@ import { House, Menu, X } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { colors } from "@/lib/tokens";
+import { bezier, colors } from "@/lib/tokens";
 import NavGlass from "./NavGlass";
-import { DEV_TUNING } from "./nav-glass-controls";
+import { DEV_TUNING } from "@/lib/dev-tuning";
 
 // Dev-only Leva folder for the glass. Statically dropped from production.
 const NavGlassTuner = DEV_TUNING
@@ -23,11 +23,6 @@ const NAV_LINKS = [
   { label: "Experience", href: "/#experience",sectionId: "experience" },
   { label: "Contact",    href: "/#contact",   sectionId: "contact"    },
 ] as const;
-
-// ─── easing arrays for framer ─────────────────────────────────────────────────
-
-const expoEase  = [0.16, 1, 0.3, 1]  as const;
-const swiftEase = [0.65, 0, 0.35, 1] as const;
 
 // ─── scroll-driven active section detection ───────────────────────────────────
 // IntersectionObserver fires when a section's top portion enters the top 55%
@@ -102,7 +97,7 @@ function NavLink({
         fontWeight:     isActive ? 600 : 400,
         letterSpacing:  "0",
         textDecoration: "none",
-        transition:     `color 300ms cubic-bezier(${swiftEase.join(",")})`,
+        transition:     `color 300ms cubic-bezier(${bezier.swift.join(",")})`,
         whiteSpace:     "nowrap",
       }}
     >
@@ -139,17 +134,17 @@ function NavLink({
 
 const overlayVariants = {
   hidden:  { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.25, ease: swiftEase } },
-  exit:    { opacity: 0, transition: { duration: 0.2,  ease: swiftEase } },
+  visible: { opacity: 1, transition: { duration: 0.25, ease: bezier.swift } },
+  exit:    { opacity: 0, transition: { duration: 0.2,  ease: bezier.swift } },
 };
 
 const mobileLinkVariants = {
   hidden:  { y: 20, opacity: 0 },
   visible: (i: number) => ({
     y: 0, opacity: 1,
-    transition: { duration: 0.4, ease: expoEase, delay: i * 0.06 },
+    transition: { duration: 0.4, ease: bezier.expo, delay: i * 0.06 },
   }),
-  exit: { y: -10, opacity: 0, transition: { duration: 0.2, ease: swiftEase } },
+  exit: { y: -10, opacity: 0, transition: { duration: 0.2, ease: bezier.swift } },
 };
 
 function MobileOverlay({
@@ -267,7 +262,7 @@ export default function Header() {
       <motion.header
         initial={reduced ? false : { y: -96, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.75, delay: 0.75, ease: expoEase }}
+        transition={{ duration: 0.75, delay: 0.75, ease: bezier.expo }}
         style={{
           position:     "fixed",
           top:          "1.5rem",

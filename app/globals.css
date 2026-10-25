@@ -5,39 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* ── Portfolio design tokens ─────────────────────────────────────────── */
-
-  /* Background */
-  --color-bg-primary: #ffffff;
-  --color-bg-secondary: #f5f5f4;
-  --color-bg-tertiary: #e7e5e4;
-
-  /* Text */
-  --color-text-primary: #0a0a0a;
-  --color-text-secondary: #404040;
-  --color-text-muted: #737373;
-
-  /* Accent — TODO: verify against antimetal.com via DevTools before shipping */
-  --color-accent-primary: #7eb5ed;
-  --color-accent-glow: rgba(126, 181, 237, 0.15);
-
-  /* Border */
-  --color-border-subtle: rgba(0, 0, 0, 0.08);
-  --color-border-strong: rgba(0, 0, 0, 0.16);
-
-  /* Easing curves */
-  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-swift: cubic-bezier(0.65, 0, 0.35, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-
-  /* Durations */
-  --duration-instant: 150ms;
-  --duration-fast: 300ms;
-  --duration-base: 500ms;
-  --duration-slow: 800ms;
-  --duration-deliberate: 1200ms;
-
-  /* Typography — font families */
+  /* Portfolio font families. Colours, easings and durations live in
+     lib/tokens.ts and are applied inline, so they aren't duplicated here. */
   --font-display: var(--font-display);
   --font-body: var(--font-geist-sans);
   --font-serif: var(--font-fraunces);
@@ -46,7 +15,6 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -84,49 +52,11 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
-  --animate-first: moveVertical 30s ease infinite;
-  --animate-second: moveInCircle 20s reverse infinite;
-  --animate-third: moveInCircle 40s linear infinite;
-  --animate-fourth: moveHorizontal 40s ease infinite;
-  --animate-fifth: moveInCircle 20s ease infinite;
-  @keyframes moveHorizontal {
-  0% {
-    transform: translateX(-50%) translateY(-10%);
-    }
-  50% {
-    transform: translateX(50%) translateY(10%);
-    }
-  100% {
-    transform: translateX(-50%) translateY(-10%);
-    }
-  }
-  @keyframes moveInCircle {
-  0% {
-    transform: rotate(0deg);
-    }
-  50% {
-    transform: rotate(180deg);
-    }
-  100% {
-    transform: rotate(360deg);
-    }
-  }
-  @keyframes moveVertical {
-  0% {
-    transform: translateY(-50%);
-    }
-  50% {
-    transform: translateY(50%);
-    }
-  100% {
-    transform: translateY(-50%);
-    }
-  }
 }
 
 :root {
-  /* Site accent. The committed default; the dev-only Leva "Accent" folder
-     overrides it live. --accent-soft and --accent-text are derived. */
+  /* Site accent. Change --accent here; --accent-soft, --accent-strong and
+     --accent-text are derived from it. */
   --accent: #ff6b4a;
   --accent-soft: color-mix(in oklab, var(--accent) 18%, white);
   /* Slightly deeper, for large text (headings, the email): ~3.2:1 for coral,
@@ -248,13 +178,6 @@
     font-family: var(--font-display);
     font-size: clamp(2rem, 5vw, 3.5rem);
     line-height: 1;
-    font-weight: 500;
-    letter-spacing: -0.015em;
-  }
-  .text-display-sm {
-    font-family: var(--font-display);
-    font-size: clamp(1.25rem, 2.5vw, 1.75rem);
-    line-height: 1.1;
     font-weight: 500;
     letter-spacing: -0.015em;
   }

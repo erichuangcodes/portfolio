@@ -8,11 +8,9 @@
 // thing that ever calls setSceneValues.
 
 import { useSyncExternalStore } from "react";
-import { colors, spherePalette } from "@/lib/tokens";
+import { spherePalette } from "@/lib/tokens";
 import { CENTER_PULL, FOG_FAR, FOG_NEAR } from "./sphere-scene";
 
-/** Dev-only tuning panel. Statically replaced, so Leva tree-shakes out of prod. */
-export const DEV_TUNING = process.env.NODE_ENV === "development";
 
 // ---------------------------------------------------------------------------
 // APPROVED LOOK — tuned by the user in the dev panel on a real GPU and pasted

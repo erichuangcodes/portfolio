@@ -14,13 +14,10 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { colors } from "@/lib/tokens";
+import { bezier, colors } from "@/lib/tokens";
 import type { Project, ProjectSection } from "@/lib/projects";
 
 // ─── easing ───────────────────────────────────────────────────────────────────
-
-const expoEase  = [0.16, 1, 0.3, 1]  as const;
-const swiftEase = [0.65, 0, 0.35, 1] as const;
 
 // ─── icons ────────────────────────────────────────────────────────────────────
 
@@ -50,7 +47,7 @@ function LinkBox({ label, href, icon: Icon }: LinkDef) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       animate={{ scale: hovered ? 1.02 : 1 }}
-      transition={{ duration: 0.3, ease: swiftEase }}
+      transition={{ duration: 0.3, ease: bezier.swift }}
       style={{
         display:        "flex",
         flexDirection:  "column",
@@ -67,7 +64,7 @@ function LinkBox({ label, href, icon: Icon }: LinkDef) {
         boxShadow:      hovered
           ? "0 8px 32px rgba(10,10,10,0.24)"
           : "0 2px 8px rgba(10,10,10,0.08)",
-        transition: `box-shadow 300ms cubic-bezier(${swiftEase.join(",")})`,
+        transition: `box-shadow 300ms cubic-bezier(${bezier.swift.join(",")})`,
       }}
       aria-label={label}
     >
@@ -97,7 +94,7 @@ function LinkBox({ label, href, icon: Icon }: LinkDef) {
         </span>
         <motion.span
           animate={{ x: hovered ? 4 : 0, y: hovered ? -4 : 0 }}
-          transition={{ duration: 0.3, ease: swiftEase }}
+          transition={{ duration: 0.3, ease: bezier.swift }}
           style={{ display: "flex", color: "rgba(255,255,255,0.45)", flexShrink: 0 }}
         >
           <ArrowUpRight size={16} strokeWidth={1.5} />
@@ -150,7 +147,7 @@ function SectionImages({ images }: { images: string[] }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.25, ease: swiftEase }}
+          transition={{ duration: 0.25, ease: bezier.swift }}
           style={{ position: "absolute", inset: 0 }}
         >
           <Image
@@ -289,7 +286,7 @@ function ContentSection({
       initial={{ opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-8%" }}
-      transition={{ duration: 0.8, ease: expoEase }}
+      transition={{ duration: 0.8, ease: bezier.expo }}
       className="detail-section-grid"
       style={{
         maxWidth: "80rem",

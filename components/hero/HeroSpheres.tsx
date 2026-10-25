@@ -9,7 +9,8 @@ import { useEffect, useRef, useState } from "react";
 import { colors } from "@/lib/tokens";
 import CursorRepeller from "./CursorRepeller";
 import SphereField from "./SphereField";
-import { DEV_TUNING, useSceneValues } from "./scene-controls";
+import { DEV_TUNING } from "@/lib/dev-tuning";
+import { useSceneValues } from "./scene-controls";
 import { buildEnvironment } from "./sphere-environment";
 import { CAMERA, sphereCountForViewport } from "./sphere-scene";
 

@@ -23,7 +23,6 @@ export const colors = {
     soft: "var(--accent-soft)",
     strong: "var(--accent-strong)",
     text: "var(--accent-text)",
-    glow: "rgba(126, 181, 237, 0.15)",
   },
   border: {
     subtle: "rgba(0, 0, 0, 0.08)",
@@ -50,9 +49,6 @@ export const colors = {
     // Occlusion tint: warm, so contact shadows sit in the same family as the
     // stage instead of greying the pastels toward dirt.
     ao: "#9A8F80",
-    // The page behind the hero card — same family, a shade down from the card
-    // so the card's edge is readable without a heavy border.
-    page: "#ECE7DF",
   },
 } as const;
 

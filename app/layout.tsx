@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import SmoothScroll from "@/components/providers/SmoothScroll";
 import PageTransition from "@/components/providers/PageTransition";
 import Header from "@/components/layout/Header";
-import { Fraunces, Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import { Fraunces, Geist, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 // Body — already in the project
@@ -20,19 +20,11 @@ const fraunces = Fraunces({
   axes: ["opsz"],
 });
 
-// Display — geometric sans stand-in for PP Neue Montreal
-// TODO: visit https://monof-template.webflow.io/ in DevTools → Computed → font-family
-//       to confirm the exact typeface, then swap this out if needed.
+// Display — hero name, headlines and project titles
 const displayFont = Plus_Jakarta_Sans({
   variable: "--font-display",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
-});
-
-// Keep Geist Mono available for shadcn internals
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -48,7 +40,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${displayFont.variable} ${fraunces.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${displayFont.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
           <SmoothScroll>

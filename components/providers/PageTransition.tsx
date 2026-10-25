@@ -4,11 +4,10 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { useLenis } from "./SmoothScroll";
+import { bezier } from "@/lib/tokens";
 
 // swift: cubic-bezier(0.65, 0, 0.35, 1)
 // expo:  cubic-bezier(0.16, 1, 0.3, 1)
-const swiftEase = [0.65, 0, 0.35, 1] as const;
-const expoEase  = [0.16, 1, 0.3, 1] as const;
 
 export default function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -23,14 +22,14 @@ export default function PageTransition({ children }: { children: React.ReactNode
       y: 0,
       transition: reduced
         ? { duration: 0 }
-        : { duration: 0.6, ease: expoEase, delay: 0.1 },
+        : { duration: 0.6, ease: bezier.expo, delay: 0.1 },
     },
     exit: {
       opacity: 0,
       y: reduced ? 0 : -16,
       transition: reduced
         ? { duration: 0 }
-        : { duration: 0.4, ease: swiftEase },
+        : { duration: 0.4, ease: bezier.swift },
     },
   };
 

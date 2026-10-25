@@ -6,8 +6,6 @@
 
 import { useSyncExternalStore } from "react";
 
-/** Dev-only tuning panel. Statically replaced, so Leva tree-shakes out of prod. */
-export const DEV_TUNING = process.env.NODE_ENV === "development";
 
 export const APPROVED_NAV_GLASS = {
   /** feDisplacementMap scale: how far the backdrop is bent (Chromium only). */

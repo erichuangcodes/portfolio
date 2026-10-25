@@ -10,10 +10,9 @@ import {
 } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { colors } from "@/lib/tokens";
+import { bezier, colors } from "@/lib/tokens";
 import { EXPERIENCE, type ExperienceEntry } from "@/lib/experience";
 
-const expoEase = [0.16, 1, 0.3, 1] as const;
 const N = EXPERIENCE.length;
 
 // ─── LogoCell ─────────────────────────────────────────────────────────────────
@@ -37,7 +36,7 @@ function LogoCell({
         opacity: inView ? (isHovered ? 1 : 0.7) : 0,
         scale: inView ? 1 : 0.95,
       }}
-      transition={{ duration: 0.8, ease: expoEase }}
+      transition={{ duration: 0.8, ease: bezier.expo }}
       style={{ paddingTop: "0.25rem" }}
     >
       {entry.logoPath && !imgError ? (
@@ -265,7 +264,7 @@ export default function Experience() {
                   style={{ color: colors.text.primary, margin: "0 0 0.5rem" }}
                   initial={{ x: -40, opacity: 0 }}
                   whileInView={{ x: 0, opacity: 1 }}
-                  transition={{ duration: 0.8, ease: expoEase }}
+                  transition={{ duration: 0.8, ease: bezier.expo }}
                   viewport={{ once: true, margin: "-20%" }}
                 >
                   {entry.company}
@@ -276,7 +275,7 @@ export default function Experience() {
                   style={{ color: colors.text.muted, margin: "0 0 1.25rem" }}
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.5, ease: expoEase, delay: 0.2 }}
+                  transition={{ duration: 0.5, ease: bezier.expo, delay: 0.2 }}
                   viewport={{ once: true, margin: "-20%" }}
                 >
                   {entry.role}&nbsp;·&nbsp;{entry.dates}
@@ -292,7 +291,7 @@ export default function Experience() {
                   }}
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.5, ease: expoEase, delay: 0.25 }}
+                  transition={{ duration: 0.5, ease: bezier.expo, delay: 0.25 }}
                   viewport={{ once: true, margin: "-20%" }}
                 >
                   {entry.description}
@@ -302,7 +301,7 @@ export default function Experience() {
                   style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.5, ease: expoEase, delay: 0.3 }}
+                  transition={{ duration: 0.5, ease: bezier.expo, delay: 0.3 }}
                   viewport={{ once: true, margin: "-20%" }}
                 >
                   {entry.tech.map((tag) => (

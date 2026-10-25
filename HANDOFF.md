@@ -58,11 +58,7 @@ should work.
 Sections 2–4 are each wrapped in `components/layout/RevealSection.tsx`.
 `components/providers/PageTransition.tsx` handles route transitions.
 
-**Unused files** (nothing imports them; they look like 21st.dev imports staged
-for later): `components/gallery6.tsx`, `components/glassmorphism-trust-hero.tsx`,
-`components/motion-footer.tsx`, `components/scroll-morph-hero.tsx`,
-`components/ui/background-gradient-animation.tsx` and its keyframes in
-`globals.css`. Leave them alone unless asked.
+**Unused files:** removed in the 2026-10-25 cleanup (section 3g).
 
 ### Recent commits (newest first)
 
@@ -432,6 +428,41 @@ variables.
   Eric's request; change `--accent` in `app/globals.css` directly.
 - shadcn's own grey `--accent` was renamed to `--accent-ui`.
 - The Experience timeline dot's yellow glow is now a soft accent ring.
+
+---
+
+## 3g. Dead-code cleanup (2026-10-25, branch `cleanup-dead-code`)
+
+**Removed:**
+- Unused 21st.dev copies: `gallery6`, `glassmorphism-trust-hero`,
+  `motion-footer`, `scroll-morph-hero`. The originals are still in
+  `inspirations/`.
+- All of `components/ui/`, including the old blob background.
+- `lib/typography.ts` and `tailwind.config.ts`. Tailwind v4 never loaded the
+  config file, because there is no `@config`.
+- `audit-report.md`, plus 9 unreferenced files in `/public` (old screenshots
+  and create-next-app SVGs).
+- 8 dependencies: the Radix packages, `radix-ui`,
+  `class-variance-authority` and `embla-carousel-react`.
+- From CSS: the blob keyframes and `--animate-*`, `.text-display-sm`, the
+  unused `@theme` colour/ease/duration entries, and Geist Mono.
+- Tokens: `colors.accent.glow` and `colors.scene.page`.
+
+**Merged:**
+- `DEV_TUNING` now lives in one place, `lib/dev-tuning.ts`.
+- The local `expoEase`/`swiftEase` arrays were replaced with `bezier.*` from
+  `lib/tokens.ts`.
+
+**Kept on purpose:**
+- `lib/utils.ts`, `clsx` and `tailwind-merge`, for future shadcn / 21st.dev
+  components.
+- shadcn's CSS variables, `.dark` and the `shadcn` / `tw-animate-css` imports.
+- `components.json` still points at `@/components/ui`, so `npx shadcn add`
+  recreates it.
+
+**Verified:** page and section heights, loaded fonts, and pixel-identical
+Projects and Experience screenshots at 1440 and 375, before and after.
+`README.md` was rewritten as a short real readme.
 
 ---
 

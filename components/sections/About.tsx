@@ -3,12 +3,10 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { about, type AboutLink } from "@/lib/about";
-import { colors, easing } from "@/lib/tokens";
+import { bezier, colors, easing } from "@/lib/tokens";
 import MusicWidget from "./MusicWidget";
 import PhotoViewer from "./PhotoViewer";
 import TypingGreeting from "./TypingGreeting";
-
-const expoEase = [0.16, 1, 0.3, 1] as const;
 
 export default function About() {
   const reduced = useReducedMotion() === true;
@@ -24,7 +22,7 @@ export default function About() {
         initial={reduced ? false : { opacity: 0, y: 32 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-15%" }}
-        transition={{ duration: 0.8, ease: expoEase }}
+        transition={{ duration: 0.8, ease: bezier.expo }}
         className="grid grid-cols-1 gap-12 md:grid-cols-[1.15fr_0.85fr] md:gap-16 lg:gap-24"
         style={{ paddingLeft: "8%", paddingRight: "8%" }}
       >

@@ -5,10 +5,9 @@ import { ChevronLeft, ChevronRight, ImageIcon } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import type { AboutPhoto } from "@/lib/about";
-import { colors, easing, shadow, spherePalette } from "@/lib/tokens";
+import { bezier, colors, easing, shadow, spherePalette } from "@/lib/tokens";
 
 const SWIPE_PX = 40;
-const swiftEase = [0.65, 0, 0.35, 1] as const;
 
 export default function PhotoViewer({ photos }: { photos: readonly AboutPhoto[] }) {
   const reduced = useReducedMotion() === true;
@@ -58,7 +57,7 @@ export default function PhotoViewer({ photos }: { photos: readonly AboutPhoto[] 
             initial={reduced ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={reduced ? undefined : { opacity: 0 }}
-            transition={{ duration: reduced ? 0 : 0.45, ease: swiftEase }}
+            transition={{ duration: reduced ? 0 : 0.45, ease: bezier.swift }}
             style={{ position: "absolute", inset: 0 }}
           >
             {photo.src ? (

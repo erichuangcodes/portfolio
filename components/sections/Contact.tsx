@@ -3,11 +3,9 @@
 import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
-import { colors } from "@/lib/tokens";
+import { bezier, colors } from "@/lib/tokens";
 
 // ─── constants ────────────────────────────────────────────────────────────────
-
-const swiftEase = [0.65, 0, 0.35, 1] as const;
 
 const EMAIL = "contact.huangeric@gmail.com";
 
@@ -76,7 +74,7 @@ function EmailLink() {
       {/* Underline — scales left → right on hover */}
       <motion.span
         animate={{ scaleX: hovered ? 1 : 0 }}
-        transition={{ duration: 0.35, ease: swiftEase }}
+        transition={{ duration: 0.35, ease: bezier.swift }}
         style={{
           display:         "block",
           position:        "absolute",
@@ -133,7 +131,7 @@ function SocialRow({
         </span>
         <motion.span
           animate={{ scaleX: hovered ? 1 : 0 }}
-          transition={{ duration: 0.2, ease: swiftEase }}
+          transition={{ duration: 0.2, ease: bezier.swift }}
           style={{
             display:         "block",
             position:        "absolute",
@@ -150,7 +148,7 @@ function SocialRow({
       {/* Arrow — slides right on hover */}
       <motion.span
         animate={{ x: hovered ? 8 : 0 }}
-        transition={{ duration: 0.2, ease: swiftEase }}
+        transition={{ duration: 0.2, ease: bezier.swift }}
         style={{ display: "flex", color: colors.text.muted, flexShrink: 0 }}
       >
         <ChevronRight size={18} strokeWidth={1.5} />

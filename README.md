@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Eric Huang — portfolio
 
-## Getting Started
+Personal portfolio site for Eric Huang, a designer and engineer. It opens on
+an interactive 3D hero of pastel physics spheres, then moves through About,
+a curved projects carousel, Experience and Contact. Each project has its own
+detail page at `/projects/[slug]`.
 
-First, run the development server:
+Built with Next.js (App Router), React, TypeScript and Tailwind CSS. The hero
+uses React Three Fiber, Rapier and postprocessing; motion uses framer-motion
+and Lenis. Deployed on Vercel from `main`.
+
+## Run it locally
+
+Requires Node.js 20 or later.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Other scripts:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build      # production build
+npm start          # serve the production build
+npm run lint
+npx tsc --noEmit   # typecheck
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+In development, a Leva panel lets you tune the hero scene, the hero's scroll
+collapse and the nav glass. It isn't included in production builds.
 
-## Learn More
+## Editing content
 
-To learn more about Next.js, take a look at the following resources:
+- Projects: `lib/projects.ts` (images in `public/projects/`)
+- About section: `lib/about.ts` (photos in `public/about/`)
+- Experience: `lib/experience.ts`
+- Colours, easings and other design tokens: `lib/tokens.ts`; the site accent
+  is `--accent` in `app/globals.css`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Working on this codebase
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Read [HANDOFF.md](HANDOFF.md) first. It covers the current state, the approved
+hero look, known issues, lessons learned and the working rules.
