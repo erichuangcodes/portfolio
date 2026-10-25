@@ -200,14 +200,13 @@ export default function Contact() {
     >
       {/* ── Main content ────────────────────────────────────────────────── */}
       <div>
-        {/* Headline — nowrap so the phrase stays on one line at 1280px+ */}
+        {/* Headline — one line from 1280px up (see .contact-headline) */}
         <h2
-          className="text-display-xl"
+          className="text-display-xl contact-headline"
           style={{
             color:         colors.text.primary,
             margin:        "0 0 4rem",
             fontSize:      "clamp(2.5rem, 7vw, 6rem)",
-            whiteSpace:    "nowrap",
             letterSpacing: "-0.025em",
           }}
         >
@@ -226,7 +225,7 @@ export default function Contact() {
               Email
             </p>
             <span
-              className="text-display-md"
+              className="text-display-md contact-email"
               style={{ color: colors.text.primary, display: "block" }}
             >
               <EmailLink />
@@ -282,17 +281,25 @@ export default function Contact() {
 
       {/* Responsive layout */}
       <style>{`
+        /* Stacked until there's room for the full email beside the links. */
         .contact-cols {
           display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 4rem;
+          grid-template-columns: minmax(0, 1fr);
+          gap: 3rem;
           align-items: start;
           max-width: 72rem;
         }
-        @media (max-width: 767px) {
+        .contact-cols > * { min-width: 0; }
+        /* Sized to the viewport so the address always fits on one line. */
+        .contact-email {
+          font-size: clamp(1.25rem, 5.4vw, 3rem) !important;
+          overflow-wrap: anywhere;
+        }
+        @media (min-width: 1280px) {
+          .contact-headline { white-space: nowrap; }
           .contact-cols {
-            grid-template-columns: 1fr;
-            gap: 3rem;
+            grid-template-columns: auto minmax(14rem, 1fr);
+            gap: 4rem;
           }
         }
       `}</style>
