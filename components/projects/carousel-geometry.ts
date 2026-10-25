@@ -40,6 +40,12 @@ const THETA_LIMIT_DEG = 84;
 const CULL_MARGIN_DEG = 2;
 /** How much a card dims (opacity) as it reaches the screen edge. */
 const EDGE_DIM = 0.35;
+/**
+ * The title/year row fades out earlier than the image (as a fraction of the
+ * edge angle), so cards cut by the screen edge never leave stray text behind.
+ */
+const META_FADE_START = 0.55;
+const META_FADE_END = 0.9;
 
 const DEG = Math.PI / 180;
 
@@ -72,6 +78,8 @@ export type CarouselGeometry = {
 export type SlidePose = {
   transform: string;
   opacity: number;
+  /** Extra opacity for the title/year row, on top of `opacity`. */
+  metaOpacity: number;
   culled: boolean;
 };
 
@@ -171,6 +179,7 @@ export function slidePose(position: number, index: number, g: CarouselGeometry):
     return {
       transform: `translateX(${d * g.pitch}px)`,
       opacity: culled ? 0 : 1,
+      metaOpacity: 1,
       culled,
     };
   }
@@ -184,7 +193,9 @@ export function slidePose(position: number, index: number, g: CarouselGeometry):
   // translateZ(R) rotateY(-θ) translateZ(-R) puts the card on a cylinder of
   // radius R around the camera, turned to face the axis.
   const transform = `translateZ(${g.radius}px) rotateY(${-clamped}rad) translateZ(${-g.radius}px)`;
-  const opacity = culled ? 0 : 1 - EDGE_DIM * smoothstep(0.35, 1, innerEdge / g.edge);
+  const edgeProgress = innerEdge / g.edge;
+  const opacity = culled ? 0 : 1 - EDGE_DIM * smoothstep(0.35, 1, edgeProgress);
+  const metaOpacity = 1 - smoothstep(META_FADE_START, META_FADE_END, edgeProgress);
 
-  return { transform, opacity, culled };
+  return { transform, opacity, metaOpacity, culled };
 }

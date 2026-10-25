@@ -7,6 +7,7 @@ import {
   useMotionValue,
   useReducedMotion,
   useSpring,
+  type MotionValue,
 } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -19,6 +20,7 @@ type ProjectCardProps = {
   project: Project;
   index: number;
   imageHeight: number;
+  metaOpacity: MotionValue<number>;
   onSelect: (index: number, e: MouseEvent<HTMLAnchorElement>) => void;
   onLinkFocus: (index: number, e: FocusEvent<HTMLAnchorElement>) => void;
   linkRef: (el: HTMLAnchorElement | null) => void;
@@ -38,6 +40,7 @@ export default function ProjectCard({
   project,
   index,
   imageHeight,
+  metaOpacity,
   onSelect,
   onLinkFocus,
   linkRef,
@@ -156,8 +159,9 @@ export default function ProjectCard({
           />
         </div>
 
-        <div
+        <motion.div
           style={{
+            opacity: metaOpacity,
             display: "flex",
             alignItems: "baseline",
             justifyContent: "space-between",
@@ -184,7 +188,7 @@ export default function ProjectCard({
           <span className="text-mono-label" style={{ color: colors.text.muted, flexShrink: 0 }}>
             {project.year}
           </span>
-        </div>
+        </motion.div>
       </motion.div>
     </Link>
   );

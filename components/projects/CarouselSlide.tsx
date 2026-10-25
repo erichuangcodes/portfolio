@@ -31,6 +31,7 @@ export default function CarouselSlide({
 }: CarouselSlideProps) {
   const transform = useTransform(position, (p) => slidePose(p, index, geometry).transform);
   const opacity = useTransform(position, (p) => slidePose(p, index, geometry).opacity);
+  const metaOpacity = useTransform(position, (p) => slidePose(p, index, geometry).metaOpacity);
   const pointerEvents = useTransform(position, (p) =>
     slidePose(p, index, geometry).culled ? "none" : "auto",
   );
@@ -62,6 +63,7 @@ export default function CarouselSlide({
         project={project}
         index={index}
         imageHeight={imageHeight}
+        metaOpacity={metaOpacity}
         onSelect={onSelect}
         onLinkFocus={onLinkFocus}
         linkRef={linkRef}
