@@ -20,8 +20,8 @@ export const DEV_TUNING = process.env.NODE_ENV === "development";
 // strong key muddies the pastels was written from software renders and was
 // wrong. Do not re-tune without being asked.
 //
-// Still true: these cannot be judged from a headless capture, because
-// SwiftShader contributes nothing from the PMREM env map.
+// Dev and production render identically now; an older note blaming
+// SwiftShader for a missing env map was wrong (see envMapIntensity).
 // ---------------------------------------------------------------------------
 export const APPROVED_SCENE = {
   /** Fill. High on purpose: three divides diffuse by PI without pre-scaling
@@ -30,8 +30,10 @@ export const APPROVED_SCENE = {
   key: 1.6,
   /** Cool rim from behind, to separate silhouettes from the stage. */
   rim: 1.85,
-  /** The PMREM env map — a major light here, invisible under SwiftShader. */
-  envMapIntensity: 1.5,
+  /** Drives scene.environmentIntensity (the PMREM env map). 0 matches the
+      look as approved: the env map was accidentally dead in dev while it was
+      tuned (a Strict Mode dispose bug), so it never contributed. */
+  envMapIntensity: 0,
   /** N8AO contact shadows. */
   ao: 0.5,
   /** The stage background — white card surface. */

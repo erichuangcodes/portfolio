@@ -5,7 +5,7 @@ import { DepthOfField, EffectComposer, N8AO } from "@react-three/postprocessing"
 import { Physics } from "@react-three/rapier";
 import { useInView, useReducedMotion } from "framer-motion";
 import dynamic from "next/dynamic";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { colors } from "@/lib/tokens";
 import CursorRepeller from "./CursorRepeller";
 import SphereField from "./SphereField";
@@ -21,14 +21,35 @@ const SceneTuner = DEV_TUNING
 
 function Atmosphere() {
   const gl = useThree((state) => state.gl);
+  const get = useThree((state) => state.get);
   const scene = useSceneValues();
-  const environment = useMemo(() => buildEnvironment(gl), [gl]);
 
-  useEffect(() => () => environment.dispose(), [environment]);
+  // Built and disposed in the same effect. A useMemo + cleanup pair breaks
+  // under React Strict Mode (dev only): the cleanup disposes the target, the
+  // remount reuses the disposed one, and the env map silently goes dark in
+  // dev while working in production.
+  useEffect(() => {
+    const environment = buildEnvironment(gl);
+    const { scene: threeScene, invalidate } = get();
+    threeScene.environment = environment.texture;
+    invalidate();
+    return () => {
+      threeScene.environment = null;
+      environment.dispose();
+    };
+  }, [gl, get]);
+
+  // The env map comes from scene.environment, whose strength is
+  // scene.environmentIntensity. A material's envMapIntensity only applies to
+  // its own envMap, so it would have no effect here.
+  useEffect(() => {
+    const { scene: threeScene, invalidate } = get();
+    threeScene.environmentIntensity = scene.envMapIntensity;
+    invalidate();
+  }, [get, scene.envMapIntensity]);
 
   return (
     <>
-      <primitive object={environment.texture} attach="environment" />
       <color attach="background" args={[scene.background]} />
       <fog attach="fog" args={[scene.background, scene.fogNear, scene.fogFar]} />
       {/* ───────────────────────────────────────────────────────────────────

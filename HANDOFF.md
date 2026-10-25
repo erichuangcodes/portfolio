@@ -374,14 +374,13 @@ title row fades out before the image does. Only transform and opacity animate.
 
 ## 5. Lessons learned (read these)
 
-1. **Headless / SwiftShader screenshots don't show the real colours.** The
-   software renderer gets nothing from the PMREM env map. This was verified:
-   changing envMapIntensity from 1.0 to 0.0 changed headless mean lightness by
-   0.002. Since the env map is a main light here, headless captures look
-   under-lit and push you toward the wrong fix. **Never judge colour or
-   lighting from them.** Use Claude in Chrome (start with `claude --chrome`)
-   for screenshots in a real browser, or ask Eric to check. Headless *DOM
-   geometry* (sizes, positions, overlap) is still reliable.
+1. **Correction (2026-10-25): SwiftShader was not the problem.** The env map
+   was dead in dev because of a React Strict Mode bug (useMemo + effect
+   cleanup disposed it), and `material.envMapIntensity` never applied because
+   the env map comes from `scene.environment` (three uses
+   `scene.environmentIntensity` for that). Both are fixed in `HeroSpheres.tsx`:
+   dev, production and headless now render the same, so headless screenshots
+   are valid for relative comparisons. The approved look has env intensity 0.
 2. **`99931a5` is the muddy look Eric rejected** (dusty rose, olive, rust).
    Don't "restore" toward it. It was wrongly chosen once (`927c056`) because I
    ranked commits by colour statistics taken from headless renders, and an
