@@ -4,15 +4,24 @@ import { Canvas, useThree } from "@react-three/fiber";
 import { DepthOfField, EffectComposer, N8AO } from "@react-three/postprocessing";
 import { Physics } from "@react-three/rapier";
 import { useInView, useReducedMotion } from "framer-motion";
+import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { colors } from "@/lib/tokens";
 import CursorRepeller from "./CursorRepeller";
 import SphereField from "./SphereField";
+import { DEV_TUNING, useSceneValues } from "./scene-controls";
 import { buildEnvironment } from "./sphere-environment";
-import { CAMERA, FOG_FAR, FOG_NEAR, sphereCountForViewport } from "./sphere-scene";
+import { CAMERA, sphereCountForViewport } from "./sphere-scene";
+
+// Dev-only Leva panel. DEV_TUNING is statically false in production, so this
+// import is dropped and Leva never ships.
+const SceneTuner = DEV_TUNING
+  ? dynamic(() => import("./SceneTuner"), { ssr: false, loading: () => null })
+  : null;
 
 function Atmosphere() {
   const gl = useThree((state) => state.gl);
+  const scene = useSceneValues();
   const environment = useMemo(() => buildEnvironment(gl), [gl]);
 
   useEffect(() => () => environment.dispose(), [environment]);
@@ -20,8 +29,8 @@ function Atmosphere() {
   return (
     <>
       <primitive object={environment.texture} attach="environment" />
-      <color attach="background" args={[colors.scene.bg]} />
-      <fog attach="fog" args={[colors.scene.bg, FOG_NEAR, FOG_FAR]} />
+      <color attach="background" args={[scene.background]} />
+      <fog attach="fog" args={[scene.background, scene.fogNear, scene.fogFar]} />
       {/* ───────────────────────────────────────────────────────────────────
           APPROVED LOOK — the values from commit 5ece2e2, confirmed by the user
           on a real GPU. Do not re-tune without being asked.
@@ -41,19 +50,20 @@ function Atmosphere() {
           map contributes nothing, so a software screenshot of this setup looks
           under-lit and invites exactly the wrong correction.
           ─────────────────────────────────────────────────────────────────── */}
-      <ambientLight intensity={1.35} />
+      <ambientLight intensity={scene.ambient} />
       {/* Soft key: the off-white stage supplies the contrast, so the spheres
           only need enough directional light to round them off. */}
-      <directionalLight position={[-7, 9, 7]} intensity={0.95} color={colors.scene.key} />
+      <directionalLight position={[-7, 9, 7]} intensity={scene.key} color={colors.scene.key} />
       {/* Rim from behind, aimed back at the camera — puts a bright edge on each
           silhouette so spheres separate from the stage. */}
-      <directionalLight position={[3, -2, -9]} intensity={0.55} color={colors.scene.rim} />
+      <directionalLight position={[3, -2, -9]} intensity={scene.rim} color={colors.scene.rim} />
     </>
   );
 }
 
 export default function HeroSpheres() {
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const scene = useSceneValues();
   const reduced = useReducedMotion();
   const inView = useInView(wrapperRef, { margin: "100px" });
 
@@ -73,13 +83,14 @@ export default function HeroSpheres() {
         inset: 0,
         zIndex: 0,
         pointerEvents: "none",
-        background: colors.scene.bg,
+        background: scene.background,
         // Match the card's animated corners and clip the canvas to them, so the
         // square canvas never pokes out past the rounded edge.
         borderRadius: "inherit",
         overflow: "hidden",
       }}
     >
+      {SceneTuner ? <SceneTuner /> : null}
       <Canvas
         frameloop={frozen ? "demand" : inView ? "always" : "never"}
         dpr={[1, 2]}
@@ -124,7 +135,7 @@ export default function HeroSpheres() {
             <N8AO
               aoRadius={1.6}
               distanceFalloff={1.0}
-              intensity={0.45}
+              intensity={scene.ao}
               color={colors.scene.ao}
               quality="medium"
               halfRes

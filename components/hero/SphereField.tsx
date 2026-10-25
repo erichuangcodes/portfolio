@@ -6,15 +6,15 @@ import {
   type InstancedRigidBodyProps,
   type RapierRigidBody,
 } from "@react-three/rapier";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { spherePalette } from "@/lib/tokens";
+import { useSceneValues } from "./scene-controls";
 import {
   ANGULAR_DAMPING,
   BOUNDS_X,
   BOUNDS_Y,
   BOUNDS_Z,
-  CENTER_PULL,
   CONTAINMENT_GAIN,
   FRICTION,
   LINEAR_DAMPING,
@@ -30,6 +30,11 @@ type Props = {
 };
 
 const PALETTE = spherePalette.map((hex) => new THREE.Color(hex));
+
+/** Dev tuning writes into PALETTE in place; the ring length is fixed at 6. */
+function syncPalette(hexes: readonly string[]): void {
+  for (let i = 0; i < PALETTE.length; i++) PALETTE[i].set(hexes[i % hexes.length]);
+}
 
 function paletteColorAt(phase: number, out: THREE.Color): THREE.Color {
   const ring = ((phase % 1) + 1) % 1 * PALETTE.length;
@@ -100,9 +105,18 @@ export default function SphereField({ count, frozen }: Props) {
   const bodiesRef = useRef<RapierRigidBody[]>(null);
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const scratch = useRef(new THREE.Color());
+  const scene = useSceneValues();
 
   const viewport = useThree((state) => state.viewport);
   const invalidate = useThree((state) => state.invalidate);
+
+  // Dev tuning only: recolour the palette ring in place and redraw. In
+  // production scene.palette is the frozen approved array, so this runs once
+  // with the same values PALETTE already holds.
+  useEffect(() => {
+    syncPalette(scene.palette);
+    invalidate();
+  }, [scene.palette, invalidate]);
 
   // Built once on mount: the seeded unit-ball layout scaled to the viewport.
   // Deliberately not recomputed on resize — that would restart the simulation.
@@ -179,7 +193,8 @@ export default function SphereField({ count, frozen }: Props) {
       const nz = p.z / BOUNDS_Z;
       const n = Math.sqrt(nx * nx + ny * ny + nz * nz);
 
-      const gain = n > 1 ? CENTER_PULL + (n - 1) * CONTAINMENT_GAIN : CENTER_PULL;
+      const pull = scene.centerPull;
+      const gain = n > 1 ? pull + (n - 1) * CONTAINMENT_GAIN : pull;
       const k = -body.mass() * gain * dt;
 
       body.applyImpulse({ x: k * nx, y: k * ny, z: k * nz }, true);
@@ -214,7 +229,7 @@ export default function SphereField({ count, frozen }: Props) {
         clearcoatRoughness={0.55}
         sheen={0.9}
         sheenRoughness={0.6}
-        envMapIntensity={1.15}
+        envMapIntensity={scene.envMapIntensity}
       />
     </instancedMesh>
   );
