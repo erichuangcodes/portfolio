@@ -70,7 +70,7 @@ export const about = {
    */
   tools: {
     /** Small heading above the band. Set to null to hide it. */
-    heading: "Tools I build with" as string | null,
+    heading: null as string | null,
     items: [
       { name: "Fusion 360", icon: null }, // only a generic Autodesk logo exists
       { name: "Inventor", icon: null }, // not in simple-icons

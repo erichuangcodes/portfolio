@@ -41,7 +41,7 @@ const ICONS: Record<string, Icon> = {
 };
 
 /** Seconds per item for one pass, so speed stays steady as the list changes. */
-const SECONDS_PER_ITEM = 3.2;
+const SECONDS_PER_ITEM = 2.4;
 
 export default function ToolsBand() {
   const ref = useRef<HTMLDivElement>(null);
@@ -74,12 +74,15 @@ export default function ToolsBand() {
 
       <style>{`
         .tools-band {
-          --tool-size: 34px;
-          --tool-gap: 3.25rem;
+          --tool-size: 48px;
+          --tool-gap: 4rem;
+          /* About 8 logos visible at once, centred rather than full-bleed. */
+          width: min(100%, calc(8 * (var(--tool-size) + var(--tool-gap))));
+          margin: 0 auto;
           overflow: hidden;
           padding: 0.5rem 0 1.75rem;
-          -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
-          mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+          -webkit-mask-image: linear-gradient(90deg, transparent, #000 25%, #000 75%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 25%, #000 75%, transparent);
         }
         .tools-track {
           display: flex;
@@ -137,7 +140,7 @@ export default function ToolsBand() {
         .tool:hover .tool-name { opacity: 1; transform: translate(-50%, 0); }
 
         @media (max-width: 767px) {
-          .tools-band { --tool-size: 24px; --tool-gap: 2.25rem; }
+          .tools-band { --tool-size: 32px; --tool-gap: 2.5rem; }
         }
         @media (prefers-reduced-motion: reduce) {
           .tools-track { animation: none; }
