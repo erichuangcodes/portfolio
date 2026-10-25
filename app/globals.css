@@ -40,7 +40,7 @@
   /* Typography — font families */
   --font-display: var(--font-display);
   --font-body: var(--font-geist-sans);
-  --font-mono: var(--font-jetbrains-mono);
+  --font-serif: var(--font-fraunces);
 
   /* ── shadcn / Tailwind defaults (unchanged) ──────────────────────────── */
   --color-background: var(--background);
@@ -264,12 +264,25 @@
     font-size: 0.875rem;
     line-height: 1.6;
   }
-  .text-mono-label {
-    font-family: var(--font-jetbrains-mono);
-    font-size: 0.75rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
+  /* Small Fraunces labels. Sentence case and normal tracking: the old
+     all-caps wide-tracked mono style reads wrong in a serif. */
+  .text-label {
+    font-family: var(--font-fraunces);
+    font-optical-sizing: auto;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: 0;
+  }
+  /* Section and context labels: the same, in italic. */
+  .text-eyebrow {
+    font-family: var(--font-fraunces);
+    font-optical-sizing: auto;
+    font-size: 0.875rem;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: 0;
   }
 }
 

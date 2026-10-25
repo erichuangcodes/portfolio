@@ -208,7 +208,7 @@ export default function Hero() {
               className="hero-datestamp"
               style={{ position: "absolute", top: "2rem", right: "2.5rem" }}
             >
-              <span className="text-mono-label" style={{ color: colors.text.muted }}>
+              <span className="text-eyebrow" style={{ color: colors.text.muted }}>
                 Portfolio&nbsp;/&nbsp;2026
               </span>
             </div>

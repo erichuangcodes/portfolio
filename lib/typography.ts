@@ -38,11 +38,10 @@ export const prose = {
     lineHeight: 1.6,
     fontFamily: "var(--font-geist-sans)",
   },
-  monoLabel: {
-    fontSize: "0.75rem",
-    fontWeight: 500,
-    textTransform: "uppercase" as const,
-    letterSpacing: "0.18em",
-    fontFamily: "var(--font-jetbrains-mono)",
+  label: {
+    fontSize: "0.8125rem",
+    fontWeight: 400,
+    letterSpacing: "0",
+    fontFamily: "var(--font-fraunces)",
   },
 } as const;

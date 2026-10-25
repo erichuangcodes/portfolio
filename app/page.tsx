@@ -29,7 +29,7 @@ export default function Home() {
           }}
         >
           <p
-            className="text-mono-label"
+            className="text-eyebrow"
             style={{ color: colors.text.muted, marginBottom: "0.75rem" }}
           >
             Selected Work

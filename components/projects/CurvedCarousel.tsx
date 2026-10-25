@@ -329,8 +329,13 @@ export default function CurvedCarousel() {
           <NavButton direction="prev" controls={stageId} onClick={() => step(-1)} />
           <span
             aria-hidden
-            className="text-mono-label"
-            style={{ color: colors.text.muted, minWidth: "4.5rem", textAlign: "center" }}
+            className="text-label"
+            style={{
+              color: colors.text.muted,
+              minWidth: "4.5rem",
+              textAlign: "center",
+              fontVariantNumeric: "tabular-nums",
+            }}
           >
             {counter}
           </span>

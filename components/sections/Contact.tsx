@@ -223,7 +223,7 @@ export default function Contact() {
           {/* Left — email */}
           <div>
             <p
-              className="text-mono-label"
+              className="text-label"
               style={{ color: colors.text.muted, margin: "0 0 1rem" }}
             >
               Email
@@ -239,7 +239,7 @@ export default function Contact() {
           {/* Right — social links */}
           <div>
             <p
-              className="text-mono-label"
+              className="text-label"
               style={{ color: colors.text.muted, margin: "0 0 0.25rem" }}
             >
               Elsewhere
@@ -275,10 +275,10 @@ export default function Contact() {
           gap:            "0.5rem",
         }}
       >
-        <span className="text-mono-label" style={{ color: colors.text.muted }}>
+        <span className="text-label" style={{ color: colors.text.muted }}>
           © 2026 Eric Huang
         </span>
-        <span className="text-mono-label" style={{ color: colors.text.muted }}>
+        <span className="text-label" style={{ color: colors.text.muted }}>
           Brooklyn, NY&nbsp;·&nbsp;<LocalTime />
         </span>
       </footer>

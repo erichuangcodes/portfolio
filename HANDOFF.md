@@ -356,6 +356,33 @@ fixed position (top 1.5rem, centred). New pieces:
 
 ---
 
+## 3d. Typography (updated 2026-10-25)
+
+Loaded in `app/layout.tsx` via `next/font/google`:
+
+| Font | CSS variable | Used for |
+|---|---|---|
+| Plus Jakarta Sans | `--font-display` | Hero name, rotating role, section headlines, project titles (`text-display-*`). Unchanged. |
+| Geist | `--font-geist-sans` | Body text, UI, skill pills. Unchanged. |
+| Fraunces (variable, `opsz` axis, normal + italic) | `--font-fraunces` (Tailwind `font-serif`) | Nav links, labels, years, captions, counters. |
+| Geist Mono | `--font-geist-mono` | Kept only for shadcn internals. |
+
+JetBrains Mono was removed entirely.
+
+- `.text-label`: Fraunces 0.8125rem, regular, sentence case, normal
+  tracking. Used for years, card meta, captions, counters, and detail-page
+  metadata.
+- `.text-eyebrow`: the same in italic, at 0.875rem. Used for section and
+  context labels ("Portfolio / 2026", "Selected Work", "Experience", the
+  mobile menu footer).
+- Both use `font-optical-sizing: auto`, so the opsz axis follows the font size.
+- `tabular-nums` is kept only on the carousel counter.
+- Note: `CLAUDE.md` still says "Inter is the only font" and describes
+  `text-mono-label`. Neither matches the code. Inter was never loaded; the
+  body font is Geist.
+
+---
+
 ## 4. Known issues
 
 - **Hydration warning with prefers-reduced-motion** (`Hero.tsx`, the name

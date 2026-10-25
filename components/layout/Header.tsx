@@ -94,10 +94,11 @@ function NavLink({
         gap:            "6px",
         padding:        "4px 0",
         color:          isActive ? colors.text.primary : colors.text.secondary,
-        fontFamily:     "var(--font-jetbrains-mono)",
-        fontSize:       "0.75rem",
-        fontWeight:     isActive ? 700 : 500,
-        letterSpacing:  "0.05em",
+        fontFamily:     "var(--font-fraunces)",
+        fontOpticalSizing: "auto",
+        fontSize:       "0.875rem",
+        fontWeight:     isActive ? 600 : 400,
+        letterSpacing:  "0",
         textDecoration: "none",
         transition:     `color 300ms cubic-bezier(${swiftEase.join(",")})`,
         whiteSpace:     "nowrap",
@@ -234,7 +235,7 @@ function MobileOverlay({
           </nav>
 
           <p
-            className="text-mono-label"
+            className="text-eyebrow"
             style={{ color: colors.text.muted, paddingLeft: "1rem" }}
           >
             Engineering Portfolio

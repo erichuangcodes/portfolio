@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import SmoothScroll from "@/components/providers/SmoothScroll";
 import PageTransition from "@/components/providers/PageTransition";
 import Header from "@/components/layout/Header";
-import { Geist, Geist_Mono, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import { Fraunces, Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 // Body — already in the project
@@ -11,11 +11,13 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-// Mono — for labels, metadata, code
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
+// Secondary — labels, nav, metadata. Variable font with the optical-size
+// axis, so small labels get the crisper low-opsz cut automatically.
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
-  weight: ["400", "500"],
+  style: ["normal", "italic"],
+  axes: ["opsz"],
 });
 
 // Display — geometric sans stand-in for PP Neue Montreal
@@ -46,7 +48,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${displayFont.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${displayFont.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
           <SmoothScroll>

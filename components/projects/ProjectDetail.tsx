@@ -300,7 +300,7 @@ function ContentSection({
       {/* Left: section index + heading + body */}
       <div>
         <p
-          className="text-mono-label"
+          className="text-label"
           style={{ color: colors.accent.primary, marginBottom: "1rem" }}
         >
           {String(index + 1).padStart(2, "0")}
@@ -397,7 +397,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
           }}
         >
           <ArrowLeft size={15} strokeWidth={1.75} />
-          <span className="text-mono-label">Back</span>
+          <span className="text-label">Back</span>
         </Link>
 
         {/* Glass card — lower-left */}
@@ -439,7 +439,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
           {/* Meta row: year · role · tech chips */}
           <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "center" }}>
             <span
-              className="text-mono-label"
+              className="text-label"
               style={{
                 color:        colors.text.muted,
                 paddingRight: "0.75rem",
@@ -449,7 +449,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
               {project.year}
             </span>
             <span
-              className="text-mono-label"
+              className="text-label"
               style={{
                 color:        colors.text.muted,
                 paddingRight: "0.75rem",
@@ -461,7 +461,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
             {project.tech.slice(0, 3).map((tag) => (
               <span
                 key={tag}
-                className="text-mono-label"
+                className="text-label"
                 style={{
                   padding:      "0.2rem 0.6rem",
                   border:       `1px solid ${colors.border.subtle}`,
@@ -489,7 +489,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
           }}
         >
           <p
-            className="text-mono-label"
+            className="text-label"
             style={{ color: colors.text.muted, marginBottom: "1.5rem" }}
           >
             Resources

@@ -60,10 +60,11 @@ function LogoCell({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            fontFamily: "var(--font-jetbrains-mono)",
-            fontSize: "0.7rem",
+            fontFamily: "var(--font-fraunces)",
+            fontOpticalSizing: "auto",
+            fontSize: "0.875rem",
             fontWeight: 500,
-            letterSpacing: "0.08em",
+            letterSpacing: "0",
             color: colors.text.muted,
           }}
         >
@@ -121,7 +122,7 @@ export default function Experience() {
     >
       <div style={{ paddingLeft: "8%", paddingRight: "8%" }}>
         <p
-          className="text-mono-label"
+          className="text-eyebrow"
           style={{ color: colors.text.muted, margin: "0 0 5rem" }}
         >
           Experience
@@ -222,11 +223,11 @@ export default function Experience() {
                   <span
                     style={{
                       marginLeft: "8px",
-                      fontFamily: "var(--font-jetbrains-mono)",
-                      fontSize: "0.62rem",
-                      fontWeight: 500,
-                      letterSpacing: "0.08em",
-                      textTransform: "uppercase",
+                      fontFamily: "var(--font-fraunces)",
+                      fontOpticalSizing: "auto",
+                      fontSize: "0.75rem",
+                      fontWeight: 400,
+                      letterSpacing: "0",
                       whiteSpace: "nowrap",
                       overflow: "hidden",
                       color: isActive ? colors.text.secondary : colors.text.muted,
@@ -301,8 +302,11 @@ export default function Experience() {
                   {entry.tech.map((tag) => (
                     <span
                       key={tag}
-                      className="text-mono-label"
                       style={{
+                        fontFamily:   "var(--font-geist-sans)",
+                        fontSize:     "0.75rem",
+                        fontWeight:   500,
+                        lineHeight:   1.4,
                         padding:      "0.3rem 0.75rem",
                         border:       `1px solid ${colors.border.subtle}`,
                         borderRadius: "9999px",

@@ -130,7 +130,7 @@ export default function ProjectCard({
             />
           ) : (
             <span
-              className="text-mono-label"
+              className="text-label"
               style={{ position: "absolute", left: 16, bottom: 16, right: 16, color: colors.text.secondary }}
             >
               {project.role}
@@ -185,7 +185,7 @@ export default function ProjectCard({
           >
             {project.title}
           </span>
-          <span className="text-mono-label" style={{ color: colors.text.muted, flexShrink: 0 }}>
+          <span className="text-label" style={{ color: colors.text.muted, flexShrink: 0 }}>
             {project.year}
           </span>
         </motion.div>
