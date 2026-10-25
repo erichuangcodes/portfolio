@@ -53,8 +53,7 @@ export const about = {
   song: {
     title: "Loft Music",
     artist: "The Weeknd",
-    // Cover: House of Balloons. Save the image as /public/about/house-of-balloons.jpg
-    // and set this to "/about/house-of-balloons.jpg" (null shows a placeholder).
-    albumArt: null as string | null,
+    // Cover art lives in /public/about. null shows a placeholder.
+    albumArt: "/about/house-of-balloons.png" as string | null,
   },
 };
