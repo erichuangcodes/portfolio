@@ -67,6 +67,7 @@ export default function CurvedCarousel() {
   const animRef = useRef<AnimationPlaybackControls | null>(null);
   const movedRef = useRef(false);
   const panIgnoredRef = useRef(false);
+  const panStartRef = useRef(0);
   const stageId = useId();
 
   const g = geometry ?? FALLBACK_GEOMETRY;
@@ -140,6 +141,7 @@ export default function CurvedCarousel() {
     panIgnoredRef.current = Math.abs(info.offset.y) > Math.abs(info.offset.x);
     if (panIgnoredRef.current) return;
     animRef.current?.stop();
+    panStartRef.current = Math.round(position.get());
     viewportRef.current?.setAttribute("data-dragging", "");
   };
 
@@ -156,11 +158,13 @@ export default function CurvedCarousel() {
     if (panIgnoredRef.current) return;
     viewportRef.current?.removeAttribute("data-dragging");
     const v = -info.velocity.x / g.pitch;
-    const current = position.get();
-    const base = Math.round(current);
-    let t = Math.round(current + v * FLICK_PROJECTION);
-    t = Math.min(base + MAX_FLICK_CARDS, Math.max(base - MAX_FLICK_CARDS, t));
-    if (Math.abs(v) > FLICK_MIN_VELOCITY && t === base) t = base + Math.sign(v);
+    // Steps are counted from the card the gesture started on, not the card
+    // nearest the release point: past halfway that is already the next card,
+    // and a minimum-step push from there would skip one.
+    const start = panStartRef.current;
+    let t = Math.round(position.get() + v * FLICK_PROJECTION);
+    if (Math.abs(v) > FLICK_MIN_VELOCITY && t === start) t = start + Math.sign(v);
+    t = Math.min(start + MAX_FLICK_CARDS, Math.max(start - MAX_FLICK_CARDS, t));
     commit(t, "spring", v);
   };
 
