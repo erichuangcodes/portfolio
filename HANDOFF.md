@@ -492,7 +492,7 @@ The spheres are slightly see-through.
 
 ## 3i. Tools band (2026-10-25)
 
-`components/sections/ToolsBand.tsx` sits between About and Projects
+`components/sections/ToolsBand.tsx` sits under the Selected Work heading in Projects
 (`app/page.tsx`). The content (heading, plus a tool list of name and
 simple-icons slug) lives in `about.tools` in `lib/about.ts`.
 
