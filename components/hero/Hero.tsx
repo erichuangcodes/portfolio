@@ -12,7 +12,12 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { colors, easing, shadow } from "@/lib/tokens";
-import { DEV_TUNING, shrinkScale, useTransitionValues } from "./scroll-controls";
+import {
+  DEV_TUNING,
+  collapseOpacity,
+  collapseScale,
+  useTransitionValues,
+} from "./scroll-controls";
 
 // WebGL + physics + WASM: kept off the initial payload and out of SSR.
 const HeroSpheres = dynamic(() => import("./HeroSpheres"), {
@@ -92,13 +97,13 @@ export default function Hero() {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // ─── scroll-linked shrink ───────────────────────────────────────────────────
-  // The wrapper is taller than the viewport (250svh, 180svh on phones); the
-  // card is pinned inside it, so progress runs 0 → 1 over the pinned travel and
-  // ends exactly as the pin releases and the next section starts to rise.
+  // No pin: the hero scrolls like a normal section. Progress runs 0 → 1 from
+  // the hero filling the viewport to it being fully above it, and the collapse
+  // happens over part of that while the next section is already rising.
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
-    offset: ["start start", "end end"],
+    offset: ["start start", "end start"],
   });
 
   // Timing comes from a tunable store (dev-only Leva panel) rather than
@@ -112,20 +117,21 @@ export default function Hero() {
     timingRef.current = timing;
   }, [timing]);
 
-  const cardScale = useMotionValue(shrinkScale(scrollYProgress.get(), timing));
+  const cardScale = useMotionValue(collapseScale(scrollYProgress.get(), timing));
+  const cardOpacity = useMotionValue(collapseOpacity(scrollYProgress.get(), timing));
   const [scenePaused, setScenePaused] = useState(false);
 
   const applyScale = useCallback(
     (progress: number) => {
       const v = timingRef.current;
-      const scale = shrinkScale(progress, v);
-      cardScale.set(scale);
+      cardScale.set(collapseScale(progress, v));
+      cardOpacity.set(collapseOpacity(progress, v));
       setScenePaused((paused) => {
-        const shouldPause = scale < v.pauseBelowScale;
+        const shouldPause = progress >= v.shrinkEnd;
         return paused === shouldPause ? paused : shouldPause;
       });
     },
-    [cardScale],
+    [cardScale, cardOpacity],
   );
 
   useEffect(() => {
@@ -150,17 +156,15 @@ export default function Hero() {
   }, [paused]);
 
   return (
-    // Tall wrapper = scroll travel for the shrink. Reduced motion collapses it
-    // to the card's own height, so the hero is just a normal first screen.
-    // White behind the card, matching the next section, so the speck sits on
-    // the same surface the page continues on.
+    // One screen tall, no extra scroll distance. White behind the card, the
+    // same as the next section, so the collapse hands straight off to it.
     <div
       ref={wrapperRef}
-      className="relative h-[250svh] max-md:h-[180svh] motion-reduce:h-auto"
+      className="relative h-svh"
       style={{ background: colors.bg.primary }}
     >
       {ScrollTuner ? <ScrollTuner /> : null}
-      <div className="sticky top-0 h-svh motion-reduce:relative">
+      <div className="h-full">
         <motion.section
           id="home"
           style={{
@@ -172,7 +176,7 @@ export default function Hero() {
             borderRadius: HERO_RADIUS,
             transformOrigin: "50% 50%",
             boxShadow: shadow.card,
-            ...(reduced ? {} : { scale: cardScale }),
+            ...(reduced ? {} : { scale: cardScale, opacity: cardOpacity }),
           }}
         >
           {/* Layer 0 — animated background */}

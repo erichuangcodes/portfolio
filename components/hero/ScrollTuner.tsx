@@ -1,12 +1,8 @@
 "use client";
 
-// Dev-only Leva panel for the hero's shrink-on-scroll timing. Dynamically
-// imported behind DEV_TUNING, so neither this file nor Leva reaches a
-// production bundle.
-//
-// It only ever *writes* to the transition store. The committed values in
-// scroll-controls.ts stay the source of truth — use "copy values" and paste
-// the result back there to make a change stick.
+// Dev-only Leva panel for the hero's scroll-out collapse. Writes to the
+// transition store only; paste "copy values" output into scroll-controls.ts
+// to make a change stick.
 
 import { button, folder, useControls } from "leva";
 import { useEffect } from "react";
@@ -17,31 +13,28 @@ import {
   type TransitionShape,
 } from "./scroll-controls";
 
+const PHASE = { min: 0, max: 1, step: 0.01 };
+
 export default function ScrollTuner() {
   const values = useControls({
     Shrink: folder({
-      settlePoint: { value: APPROVED_TRANSITION.settlePoint, min: 0, max: 1, step: 0.01 },
-      settleScale: { value: APPROVED_TRANSITION.settleScale, min: 0.5, max: 1, step: 0.01 },
-      settlePower: { value: APPROVED_TRANSITION.settlePower, min: 0.5, max: 4, step: 0.1 },
-      speckScale: { value: APPROVED_TRANSITION.speckScale, min: 0.005, max: 0.3, step: 0.005 },
+      shrinkStart: { value: APPROVED_TRANSITION.shrinkStart, ...PHASE },
+      shrinkEnd: { value: APPROVED_TRANSITION.shrinkEnd, ...PHASE },
+      fadeStart: { value: APPROVED_TRANSITION.fadeStart, ...PHASE },
       collapsePower: { value: APPROVED_TRANSITION.collapsePower, min: 0.5, max: 6, step: 0.1 },
-      pauseBelowScale: { value: APPROVED_TRANSITION.pauseBelowScale, min: 0.01, max: 0.3, step: 0.005 },
     }),
     "copy values": button(async (get) => {
       const snapshot: TransitionShape = {
-        settlePoint: get("Shrink.settlePoint"),
-        settleScale: get("Shrink.settleScale"),
-        settlePower: get("Shrink.settlePower"),
-        speckScale: get("Shrink.speckScale"),
+        shrinkStart: get("Shrink.shrinkStart"),
+        shrinkEnd: get("Shrink.shrinkEnd"),
+        fadeStart: get("Shrink.fadeStart"),
         collapsePower: get("Shrink.collapsePower"),
-        pauseBelowScale: get("Shrink.pauseBelowScale"),
       };
       const code = formatTransitionValues(snapshot);
       try {
         await navigator.clipboard.writeText(code);
         console.info("[ScrollTuner] values copied to clipboard\n" + code);
       } catch {
-        // Clipboard needs a secure context and focus; the log is the fallback.
         console.info("[ScrollTuner] clipboard unavailable — copy from here:\n" + code);
       }
     }),
@@ -49,12 +42,10 @@ export default function ScrollTuner() {
 
   useEffect(() => {
     setTransitionValues({
-      settlePoint: values.settlePoint,
-      settleScale: values.settleScale,
-      settlePower: values.settlePower,
-      speckScale: values.speckScale,
+      shrinkStart: values.shrinkStart,
+      shrinkEnd: values.shrinkEnd,
+      fadeStart: values.fadeStart,
       collapsePower: values.collapsePower,
-      pauseBelowScale: values.pauseBelowScale,
     });
   }, [values]);
 
