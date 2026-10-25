@@ -12,7 +12,7 @@ import SphereField from "./SphereField";
 import { DEV_TUNING } from "@/lib/dev-tuning";
 import { useSceneValues } from "./scene-controls";
 import { buildEnvironment } from "./sphere-environment";
-import { CAMERA, sphereCountForViewport } from "./sphere-scene";
+import { CAMERA, extraSpheresForViewport, sphereCountForViewport } from "./sphere-scene";
 
 
 // Dev-only Leva panel. DEV_TUNING is statically false in production, so this
@@ -99,7 +99,8 @@ export default function HeroSpheres({ paused = false }: Props) {
     const w = typeof window === "undefined" ? 1280 : window.innerWidth;
     return { width: w, postprocessing: w >= 768 };
   });
-  const count = sphereCountForViewport(width, scene);
+  const extras = extraSpheresForViewport(width);
+  const count = sphereCountForViewport(width, scene) + extras.large + extras.medium;
   // Count and sizes are fixed at mount; a tuning change rebuilds the field.
   const fieldKey = `${count}-${scene.minRadius}-${scene.maxRadius}`;
 
@@ -154,10 +155,10 @@ export default function HeroSpheres({ paused = false }: Props) {
         <Atmosphere />
 
         {frozen ? (
-          <SphereField key={fieldKey} count={count} frozen />
+          <SphereField key={fieldKey} count={count} extras={extras} frozen />
         ) : (
           <Physics gravity={[0, 0, 0]}>
-            <SphereField key={fieldKey} count={count} frozen={false} />
+            <SphereField key={fieldKey} count={count} extras={extras} frozen={false} />
             <CursorRepeller />
           </Physics>
         )}

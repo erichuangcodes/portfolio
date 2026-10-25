@@ -48,6 +48,23 @@ export const COUNT_DESKTOP = 64; // >= 1280px
 export const COUNT_TABLET = 40; // >= 768px
 export const COUNT_MOBILE = 24;
 
+// Extra spheres added on top of the random spread, for a slightly denser
+// cluster: a fixed number of big ones and medium ones per viewport tier.
+export type ExtraSpheres = { large: number; medium: number };
+export const EXTRAS_DESKTOP: ExtraSpheres = { large: 5, medium: 5 };
+export const EXTRAS_TABLET: ExtraSpheres = { large: 3, medium: 3 };
+export const EXTRAS_MOBILE: ExtraSpheres = { large: 2, medium: 2 };
+
+// Where the extras fall inside [minRadius, maxRadius], as fractions.
+const LARGE_BAND: [number, number] = [0.75, 1];
+const MEDIUM_BAND: [number, number] = [0.35, 0.55];
+
+export function extraSpheresForViewport(width: number): ExtraSpheres {
+  if (width < 768) return EXTRAS_MOBILE;
+  if (width < 1280) return EXTRAS_TABLET;
+  return EXTRAS_DESKTOP;
+}
+
 // Seconds for one trip through the palette ring
 export const HUE_PERIOD_MIN = 20;
 export const HUE_PERIOD_MAX = 45;
@@ -89,13 +106,22 @@ export function sphereCountForViewport(
   return counts.countDesktop;
 }
 
+/**
+ * `count` is the total. The last `extras.large + extras.medium` spheres get
+ * sizes from fixed bands; the rest use the random spread. Extras are appended
+ * after the seeded spheres, so adding them never moves the existing ones.
+ */
 export function buildInstances(
   count: number,
   minRadius: number = RADIUS_MIN,
   maxRadius: number = RADIUS_MAX,
+  extras: ExtraSpheres = { large: 0, medium: 0 },
 ): SphereInstance[] {
   const rand = mulberry32(SEED);
   const out: SphereInstance[] = [];
+  const base = Math.max(0, count - extras.large - extras.medium);
+  const span = maxRadius - minRadius;
+  const inBand = ([lo, hi]: [number, number]) => minRadius + span * (lo + (hi - lo) * rand());
 
   for (let i = 0; i < count; i++) {
     // Uniform point in the unit ball
@@ -110,8 +136,11 @@ export function buildInstances(
         r * sinPhi * Math.sin(theta),
         r * Math.cos(phi),
       ],
-      // Biased toward the small end so a few large spheres read as foreground
-      radius: minRadius + (maxRadius - minRadius) * Math.pow(rand(), RADIUS_BIAS),
+      // Leans toward medium-large; the extras use fixed size bands.
+      radius:
+        i < base
+          ? minRadius + span * Math.pow(rand(), RADIUS_BIAS)
+          : inBand(i < base + extras.large ? LARGE_BAND : MEDIUM_BAND),
       huePhase: rand(),
       huePeriod: HUE_PERIOD_MIN + rand() * (HUE_PERIOD_MAX - HUE_PERIOD_MIN),
       huePair: 0.06 + rand() * 0.08,

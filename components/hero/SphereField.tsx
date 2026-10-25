@@ -19,12 +19,15 @@ import {
   FRICTION,
   LINEAR_DAMPING,
   RESTITUTION,
+  type ExtraSpheres,
   type SphereInstance,
   buildInstances,
 } from "./sphere-scene";
 
 type Props = {
+  /** Total spheres, including the extras. */
   count: number;
+  extras: ExtraSpheres;
   /** Reduced-motion path: no physics, one static frame. */
   frozen: boolean;
 };
@@ -182,7 +185,7 @@ function applyGradientShader(shader: {
     );
 }
 
-export default function SphereField({ count, frozen }: Props) {
+export default function SphereField({ count, extras, frozen }: Props) {
   const bodiesRef = useRef<RapierRigidBody[]>(null);
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const drawRef = useRef<THREE.InstancedMesh>(null);
@@ -203,7 +206,7 @@ export default function SphereField({ count, frozen }: Props) {
   // Built once on mount: the seeded unit-ball layout scaled to the viewport.
   // Deliberately not recomputed on resize — that would restart the simulation.
   const [{ seeds, instances, colorBArray, colorASrc, colorBSrc, order, depth }] = useState(() => {
-    const built = buildInstances(count, scene.minRadius, scene.maxRadius);
+    const built = buildInstances(count, scene.minRadius, scene.maxRadius, extras);
     const bx = Math.max(viewport.width, 1) * BOUNDS_X;
     const by = Math.max(viewport.height, 1) * BOUNDS_Y;
 

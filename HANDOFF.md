@@ -188,7 +188,7 @@ coming from `sphere-scene.ts` and the palette from `lib/tokens.ts`.
 | Balloon opacity (centre / edge) | **0.7 / 0.7** | `APPROVED_SCENE.opacity`, `.edgeOpacity` |
 | Fresnel falloff | **2.5** | `APPROVED_SCENE.fresnelPower` |
 | Sphere radius (min / max) | **0.9 / 1.8** | `RADIUS_MIN`, `RADIUS_MAX` in `sphere-scene.ts` |
-| Sphere count (desktop / tablet / phone) | **64 / 40 / 24** | `COUNT_*` in `sphere-scene.ts` |
+| Sphere count (desktop / tablet / phone) | **64 / 40 / 24, plus 5+5 / 3+3 / 2+2 extra big+medium** | `COUNT_*`, `EXTRAS_*` in `sphere-scene.ts` |
 
 Palette (`spherePalette` in `lib/tokens.ts`), in ring order:
 1. `#B9A7F0` lavender
