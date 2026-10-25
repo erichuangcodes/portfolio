@@ -8,26 +8,25 @@
 
 // ─── config ──────────────────────────────────────────────────────────────────
 
-type Breakpoint = {
-  /** Lower bound of the container width (px) this breakpoint applies from. */
-  minWidth: number;
-  /** Card width as a fraction of the container, before clamping. */
-  cardFraction: number;
-  minCardWidth: number;
-  maxCardWidth: number;
-  /** Angle (deg) at which the screen edge sits. The "curve strength" knob. */
-  edgeAngleDeg: number;
-  gap: number;
-  /** Width of the left/right fade mask, as a fraction of the container. */
-  maskFade: number;
-};
+// Every parameter is a continuous function of the measured container width,
+// so there is no breakpoint where cards jump in size or the curve snaps, and
+// card width never shrinks as the container grows.
 
-// Widest first, so the first match wins.
-const BREAKPOINTS: readonly Breakpoint[] = [
-  { minWidth: 1024, cardFraction: 0.22, minCardWidth: 260, maxCardWidth: 400, edgeAngleDeg: 50, gap: 14, maskFade: 0.1 },
-  { minWidth: 640, cardFraction: 0.38, minCardWidth: 260, maxCardWidth: 360, edgeAngleDeg: 38, gap: 12, maskFade: 0.06 },
-  { minWidth: 0, cardFraction: 0.74, minCardWidth: 260, maxCardWidth: 340, edgeAngleDeg: 26, gap: 10, maskFade: 0.04 },
+/** Card width (px) at container widths (px); linear between, flat past the ends. */
+const CARD_WIDTH_STOPS: readonly (readonly [number, number])[] = [
+  [0, 0],
+  [400, 296], // phones: 74% of the width
+  [1440, 317],
+  [1920, 400],
 ];
+/** Container widths between which the curve, gap and mask ease from compact to wide. */
+const COMPACT_WIDTH = 480;
+const WIDE_WIDTH = 1280;
+/** Angle (deg) at which the screen edge sits: the "curve strength" knob. */
+const EDGE_ANGLE_DEG = { compact: 26, wide: 50 } as const;
+const GAP = { compact: 10, wide: 14 } as const;
+/** Width of the left/right fade mask, as a fraction of the container. */
+const MASK_FADE = { compact: 0.04, wide: 0.1 } as const;
 
 export const IMAGE_ASPECT = 4 / 3;
 /** 12px gap plus a 24px title row below the image. */
@@ -100,30 +99,33 @@ function smoothstep(edge0: number, edge1: number, x: number): number {
   return t * t * (3 - 2 * t);
 }
 
-function breakpointFor(width: number): Breakpoint {
-  return BREAKPOINTS.find((b) => width >= b.minWidth) ?? BREAKPOINTS[BREAKPOINTS.length - 1];
+function lerp(from: number, to: number, t: number): number {
+  return from + (to - from) * t;
+}
+
+function interpolateStops(x: number, stops: readonly (readonly [number, number])[]): number {
+  const last = stops[stops.length - 1];
+  if (x >= last[0]) return last[1];
+  const i = stops.findIndex(([sx]) => sx > x);
+  if (i <= 0) return stops[0][1];
+  const [x0, y0] = stops[i - 1];
+  const [x1, y1] = stops[i];
+  return lerp(y0, y1, (x - x0) / (x1 - x0));
 }
 
 // ─── geometry ────────────────────────────────────────────────────────────────
 
 export function computeGeometry(containerWidth: number, count: number, reduced: boolean): CarouselGeometry {
-  const bp = breakpointFor(containerWidth);
+  const k = Math.min(1, Math.max(0, (containerWidth - COMPACT_WIDTH) / (WIDE_WIDTH - COMPACT_WIDTH)));
   const cardWidth = Math.round(
-    Math.max(
-      0,
-      Math.min(
-        Math.max(containerWidth * bp.cardFraction, bp.minCardWidth),
-        bp.maxCardWidth,
-        containerWidth - SIDE_MARGIN,
-      ),
-    ),
+    Math.max(0, Math.min(interpolateStops(containerWidth, CARD_WIDTH_STOPS), containerWidth - SIDE_MARGIN)),
   );
   const imageHeight = Math.round(cardWidth / IMAGE_ASPECT);
   const shellHeight = imageHeight + META_HEIGHT;
 
-  const edge = bp.edgeAngleDeg * DEG;
+  const edge = lerp(EDGE_ANGLE_DEG.compact, EDGE_ANGLE_DEG.wide, k) * DEG;
   const radius = containerWidth / 2 / Math.tan(edge);
-  const pitch = cardWidth + bp.gap;
+  const pitch = cardWidth + lerp(GAP.compact, GAP.wide, k);
   const dTheta = pitch / radius;
   const halfAngle = cardWidth / 2 / radius;
 
@@ -151,7 +153,7 @@ export function computeGeometry(containerWidth: number, count: number, reduced: 
     // With too few cards, the wrap seam would be visible on screen.
     loop: count > 2 * cullDistance + 0.1,
     stageHeight,
-    maskFade: bp.maskFade,
+    maskFade: lerp(MASK_FADE.compact, MASK_FADE.wide, k),
   };
 }
 

@@ -122,7 +122,7 @@ export default function ProjectCard({
               alt=""
               fill
               draggable={false}
-              sizes="(max-width: 639px) 74vw, (max-width: 1023px) 38vw, 400px"
+              sizes="(max-width: 400px) 74vw, 400px"
               style={{ objectFit: "cover" }}
             />
           ) : (
