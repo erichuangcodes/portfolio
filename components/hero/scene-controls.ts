@@ -34,9 +34,8 @@ export const APPROVED_SCENE = {
   envMapIntensity: 1.5,
   /** N8AO contact shadows. */
   ao: 0.5,
-  /** Zero alpha: the WebGL scene clears transparent and the card's own
-      off-white surface shows through. See isTransparent(). */
-  background: "#00000000",
+  /** The stage background — white card surface. */
+  background: "#FFFFFF",
   /** Fog from the camera out to 160 units. The cluster sits inside ~20 units,
       so this is a very light haze rather than the old close fog. */
   fogNear: FOG_NEAR,
@@ -122,20 +121,3 @@ export function formatSceneValues(v: SceneValues): string {
   ].join("\n");
 }
 
-/**
- * Leva's colour input carries an alpha channel, so it can hand back 8-digit
- * hex. THREE.Color only parses 3- and 6-digit forms — it warns and keeps its
- * previous value for anything else — so a zero-alpha pick has to be handled as
- * a transparent clear rather than passed through as a colour.
- */
-export function isTransparent(hex: string): boolean {
-  return /^#[0-9a-f]{6}00$/i.test(hex.trim());
-}
-
-/** A three-safe colour for `hex`, falling back to the stage colour. */
-export function sceneColor(hex: string): string {
-  const v = hex.trim();
-  if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(v)) return v;
-  if (/^#([0-9a-f]{6})[0-9a-f]{2}$/i.test(v)) return v.slice(0, 7);
-  return colors.scene.bg;
-}
