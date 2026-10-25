@@ -9,7 +9,7 @@ import {
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { spherePalette } from "@/lib/tokens";
-import { useSceneValues } from "./scene-controls";
+import { APPROVED_SCENE, useSceneValues } from "./scene-controls";
 import {
   ANGULAR_DAMPING,
   BOUNDS_X,
@@ -74,10 +74,10 @@ function computeColors(
 }
 
 // Balloon translucency. Shared uniforms, so tuning never recompiles the shader.
-const BALLOON_UNIFORMS = {
-  uOpacity: { value: 0.85 },
-  uEdgeOpacity: { value: 1 },
-  uFresnelPower: { value: 2.5 },
+const BALLOON_UNIFORMS: Record<"uOpacity" | "uEdgeOpacity" | "uFresnelPower", { value: number }> = {
+  uOpacity: { value: APPROVED_SCENE.opacity },
+  uEdgeOpacity: { value: APPROVED_SCENE.edgeOpacity },
+  uFresnelPower: { value: APPROVED_SCENE.fresnelPower },
 };
 
 /**
@@ -228,14 +228,6 @@ export default function SphereField({ count, frozen }: Props) {
     invalidate();
   }, [scene.opacity, scene.edgeOpacity, scene.fresnelPower, invalidate]);
 
-  useLayoutEffect(() => {
-    const draw = drawRef.current;
-    if (!draw) return;
-    // Allocates instanceColor; writeSorted fills it every frame.
-    draw.setColorAt(0, scratch.current.setRGB(1, 1, 1));
-    invalidate();
-  }, [invalidate]);
-
   // Without physics driving them, the static path writes its matrices by hand.
   useLayoutEffect(() => {
     const mesh = meshRef.current;
@@ -260,7 +252,10 @@ export default function SphereField({ count, frozen }: Props) {
     const draw = drawRef.current;
     const time = state.clock.elapsedTime;
 
-    if (mesh && draw && draw.instanceColor && colorB.current) {
+    if (mesh && draw && colorB.current) {
+      // Allocated here rather than in an effect, so a remount (or hot reload)
+      // can never leave the draw mesh without colours and stop it updating.
+      if (!draw.instanceColor) draw.setColorAt(0, scratch.current.setRGB(1, 1, 1));
       computeColors(colorASrc, colorBSrc, seeds, time, scratch.current);
       writeSorted(mesh, draw, colorB.current, colorASrc, colorBSrc, state.camera, order, depth);
     }

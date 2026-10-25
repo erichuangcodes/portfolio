@@ -184,7 +184,7 @@ coming from `sphere-scene.ts` and the palette from `lib/tokens.ts`.
 | Stage background | **`#FFFFFF`** (pure white) | `APPROVED_SCENE.background` |
 | Fog near / far | **0 / 160** | `FOG_NEAR`, `FOG_FAR` in `sphere-scene.ts` |
 | Centre pull | **0.75** | `CENTER_PULL` in `sphere-scene.ts` |
-| Balloon opacity (centre / edge) | **0.85 / 1.0** | `APPROVED_SCENE.opacity`, `.edgeOpacity` |
+| Balloon opacity (centre / edge) | **0.7 / 0.7** | `APPROVED_SCENE.opacity`, `.edgeOpacity` |
 | Fresnel falloff | **2.5** | `APPROVED_SCENE.fresnelPower` |
 
 Palette (`spherePalette` in `lib/tokens.ts`), in ring order:

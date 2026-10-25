@@ -43,9 +43,9 @@ export const APPROVED_SCENE = {
   centerPull: CENTER_PULL,
   palette: [...spherePalette] as string[],
   /** Balloon translucency: alpha at the centre of each sphere… */
-  opacity: 0.85,
+  opacity: 0.7,
   /** …rising to this at the rim (fresnel). */
-  edgeOpacity: 1,
+  edgeOpacity: 0.7,
   /** How quickly alpha rises toward the rim. Higher = thinner opaque edge. */
   fresnelPower: 2.5,
 } as const satisfies SceneShape;
