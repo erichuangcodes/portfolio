@@ -51,8 +51,10 @@ export const about = {
 
   /** "On repeat lately". Static for now. albumArt: path under /public or null. */
   song: {
-    title: "Song title", // PLACEHOLDER
-    artist: "Artist name", // PLACEHOLDER
+    title: "Loft Music",
+    artist: "The Weeknd",
+    // Cover: House of Balloons. Save the image as /public/about/house-of-balloons.jpg
+    // and set this to "/about/house-of-balloons.jpg" (null shows a placeholder).
     albumArt: null as string | null,
   },
 };
