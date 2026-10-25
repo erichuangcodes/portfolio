@@ -9,7 +9,6 @@ type HorizontalWheelOptions = {
   onDelta: (dx: number) => void;
   /** Called once a horizontal stream goes idle. */
   onEnd: () => void;
-  enabled?: boolean;
 };
 
 /**
@@ -23,7 +22,7 @@ type HorizontalWheelOptions = {
  */
 export function useHorizontalWheel(
   ref: RefObject<HTMLElement | null>,
-  { onDelta, onEnd, enabled = true }: HorizontalWheelOptions,
+  { onDelta, onEnd }: HorizontalWheelOptions,
 ): void {
   const onDeltaRef = useRef(onDelta);
   const onEndRef = useRef(onEnd);
@@ -35,7 +34,7 @@ export function useHorizontalWheel(
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || !enabled) return;
+    if (!el) return;
 
     let axis: "x" | "y" | null = null;
     let idleTimer: number | undefined;
@@ -73,5 +72,5 @@ export function useHorizontalWheel(
       el.removeEventListener("wheel", handleWheel);
       window.clearTimeout(idleTimer);
     };
-  }, [ref, enabled]);
+  }, [ref]);
 }
