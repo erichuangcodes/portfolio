@@ -32,6 +32,13 @@ type Props = {
 
 const PALETTE = spherePalette.map((hex) => new THREE.Color(hex));
 
+// A render layer no camera draws, for the collider-source mesh.
+const PHYSICS_ONLY_LAYER = (() => {
+  const layers = new THREE.Layers();
+  layers.set(1);
+  return layers;
+})();
+
 /** Dev tuning writes into PALETTE in place; the ring length is fixed at 6. */
 function syncPalette(hexes: readonly string[]): void {
   for (let i = 0; i < PALETTE.length; i++) PALETTE[i].set(hexes[i % hexes.length]);
@@ -264,6 +271,27 @@ export default function SphereField({ count, frozen }: Props) {
       if (!draw.instanceColor) draw.setColorAt(0, scratch.current.setRGB(1, 1, 1));
       computeColors(colorASrc, colorBSrc, seeds, time, scratch.current);
       writeSorted(mesh, draw, colorB.current, colorASrc, colorBSrc, state.camera, order, depth);
+
+      // TEMPORARY debug (dev only): did the bodies move, and did the copy land?
+      const src = mesh.instanceMatrix.array as Float32Array;
+      const dst = draw.instanceMatrix.array as Float32Array;
+      let s = 0;
+      let d = 0;
+      for (let i = 0; i < count; i++) {
+        s += src[i * 16 + 12] + src[i * 16 + 13] + src[i * 16 + 14];
+        d += dst[i * 16 + 12] + dst[i * 16 + 13] + dst[i * 16 + 14];
+      }
+      heroDebug.sourceChecksum = s;
+      heroDebug.drawChecksum = d;
+    }
+    const dbgBodies = bodiesRef.current;
+    if (dbgBodies && dbgBodies.length) {
+      let v = 0;
+      for (const b of dbgBodies) {
+        const lv = b.linvel();
+        v += Math.hypot(lv.x, lv.y, lv.z);
+      }
+      heroDebug.bodySpeed = v / dbgBodies.length;
     }
 
     const bodies = bodiesRef.current;
@@ -292,12 +320,15 @@ export default function SphereField({ count, frozen }: Props) {
 
   // Physics (or the frozen layout) writes into this mesh; it is never drawn.
   // Its radius-1 geometry is what the ball colliders are sized from.
+  // Hidden by render layer, NOT visible={false}: Rapier builds colliders with
+  // traverseVisible, so an invisible mesh gets no colliders, the bodies end up
+  // massless, and nothing moves. The camera only renders layer 0.
   const mesh = (
     <instancedMesh
       ref={meshRef}
       args={[undefined, undefined, count]}
       frustumCulled={false}
-      visible={false}
+      layers={PHYSICS_ONLY_LAYER}
     >
       <sphereGeometry args={[1, 8, 6]} />
     </instancedMesh>

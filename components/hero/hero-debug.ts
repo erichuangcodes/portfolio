@@ -21,4 +21,10 @@ export const heroDebug = {
   cursorInfluence: 0,
   /** R3F frames rendered (counts toward FPS). */
   frames: 0,
+  /** Average body speed (world units/s), straight from Rapier. */
+  bodySpeed: 0,
+  /** Sum of all physics-mesh instance positions: changes when bodies move. */
+  sourceChecksum: 0,
+  /** Same sum over the visible mesh: should track sourceChecksum. */
+  drawChecksum: 0,
 };

@@ -45,6 +45,9 @@ export default function HeroDebugOverlay() {
     ["cursor body", snap.cursorBody.map((n) => n.toFixed(2)).join(", ")],
     ["cursor influence", snap.cursorInfluence.toFixed(2)],
     ["fps", snap.fps.toFixed(0)],
+    ["body speed avg", snap.bodySpeed.toFixed(3)],
+    ["source sum", snap.sourceChecksum.toFixed(3)],
+    ["draw sum", snap.drawChecksum.toFixed(3)],
   ];
 
   return (
