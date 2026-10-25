@@ -1,10 +1,18 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { colors } from "@/lib/tokens";
+import NavGlass from "./NavGlass";
+import { DEV_TUNING } from "./nav-glass-controls";
+
+// Dev-only Leva folder for the glass. Statically dropped from production.
+const NavGlassTuner = DEV_TUNING
+  ? dynamic(() => import("./NavGlassTuner"), { ssr: false, loading: () => null })
+  : null;
 
 // ─── nav links ────────────────────────────────────────────────────────────────
 
@@ -64,35 +72,38 @@ function NavLink({
   href,
   label,
   isActive,
+  reduced,
   onClick,
 }: {
   href: string;
   label: string;
   isActive: boolean;
+  reduced: boolean;
   onClick?: () => void;
 }) {
   return (
     <Link
       href={href}
       onClick={onClick}
+      aria-current={isActive ? "true" : undefined}
+      className="nav-link"
       style={{
         position:       "relative",
         display:        "inline-flex",
         alignItems:     "center",
         gap:            "6px",
         padding:        "4px 0",
-        color:          isActive ? colors.text.primary : colors.text.muted,
+        color:          isActive ? colors.text.primary : colors.text.secondary,
         fontFamily:     "var(--font-jetbrains-mono)",
         fontSize:       "0.75rem",
         fontWeight:     isActive ? 700 : 500,
         letterSpacing:  "0.05em",
         textDecoration: "none",
-        transition:     `color 200ms cubic-bezier(${expoEase.join(",")}), font-weight 0ms`,
+        transition:     `color 300ms cubic-bezier(${swiftEase.join(",")})`,
         whiteSpace:     "nowrap",
       }}
-      className="group"
     >
-      {/* Active dot — layoutId shared across all NavLink instances for spring animation */}
+      {/* Active dot — one shared layoutId, so it glides between links */}
       <span style={{ width: "4px", display: "flex", justifyContent: "center" }}>
         {isActive && (
           <motion.span
@@ -104,33 +115,15 @@ function NavLink({
               background:   colors.accent.primary,
               display:      "block",
             }}
-            transition={{ type: "spring", stiffness: 400, damping: 35 }}
+            transition={
+              reduced
+                ? { duration: 0 }
+                : { type: "spring", stiffness: 400, damping: 35 }
+            }
           />
         )}
       </span>
-
-      {/* Label + grow-from-left underline */}
-      <span style={{ position: "relative" }}>
-        {label}
-        <span
-          style={{
-            position:        "absolute",
-            bottom:          "-1px",
-            left:            0,
-            height:          "1px",
-            width:           "100%",
-            background:      colors.text.primary,
-            transformOrigin: "left center",
-            transform:       "scaleX(0)",
-            transition:      `transform 200ms cubic-bezier(${expoEase.join(",")})`,
-          }}
-          className="nav-underline"
-        />
-      </span>
-
-      <style>{`
-        .group:hover .nav-underline { transform: scaleX(1) !important; }
-      `}</style>
+      {label}
     </Link>
   );
 }
@@ -256,55 +249,34 @@ function MobileOverlay({
 
 export default function Header() {
   const activeHref = useActiveSection();
-  const [scrolled,  setScrolled]  = useState(false);
-  const [menuOpen,  setMenuOpen]  = useState(false);
-  const ticking = useRef(false);
-
-  useEffect(() => {
-    function onScroll() {
-      if (!ticking.current) {
-        requestAnimationFrame(() => {
-          setScrolled(window.scrollY > 40);
-          ticking.current = false;
-        });
-        ticking.current = true;
-      }
-    }
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const reduced = useReducedMotion() === true;
 
   return (
     <>
-      {/* ── Pill nav ──────────────────────────────────────────────────────── */}
-      <header
+      {NavGlassTuner ? <NavGlassTuner /> : null}
+
+      {/* ── Liquid-glass pill nav ─────────────────────────────────────────── */}
+      <motion.header
+        initial={reduced ? false : { y: -96, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.75, delay: 0.75, ease: expoEase }}
         style={{
-          position:       "fixed",
-          top:            "1.5rem",
-          left:           "50%",
-          transform:      "translateX(-50%)",
-          zIndex:         100,
-          borderRadius:   "9999px",
-          padding:        "10px 20px",
-          display:        "flex",
-          alignItems:     "center",
-          background:     scrolled ? "rgba(255,255,255,0.7)" : "transparent",
-          backdropFilter: scrolled ? "blur(20px)" : "none",
-          WebkitBackdropFilter: scrolled ? "blur(20px)" : "none",
-          border:         scrolled
-            ? `1px solid ${colors.border.subtle}`
-            : "1px solid transparent",
-          boxShadow:      scrolled
-            ? "0 4px 24px rgba(10,10,10,0.06)"
-            : "none",
-          transition:     `background 300ms cubic-bezier(${swiftEase.join(",")}),
-                           border-color 300ms cubic-bezier(${swiftEase.join(",")}),
-                           box-shadow 300ms cubic-bezier(${swiftEase.join(",")}),
-                           backdrop-filter 300ms cubic-bezier(${swiftEase.join(",")})`,
+          position:     "fixed",
+          top:          "1.5rem",
+          left:         "50%",
+          x:            "-50%",
+          zIndex:       100,
+          borderRadius: "9999px",
+          padding:      "10px 20px",
+          display:      "flex",
+          alignItems:   "center",
         }}
       >
+        <NavGlass />
+
         <nav
-          style={{ display: "flex", alignItems: "center", gap: "1.75rem" }}
+          style={{ position: "relative", display: "flex", alignItems: "center", gap: "1.75rem" }}
           className="header-nav"
         >
           {NAV_LINKS.map((link) => (
@@ -313,6 +285,7 @@ export default function Header() {
               href={link.href}
               label={link.label}
               isActive={link.href === activeHref}
+              reduced={reduced}
             />
           ))}
         </nav>
@@ -321,6 +294,7 @@ export default function Header() {
           onClick={() => setMenuOpen(true)}
           aria-label="Open menu"
           style={{
+            position:   "relative",
             background: "none",
             border:     "none",
             cursor:     "pointer",
@@ -332,9 +306,15 @@ export default function Header() {
         >
           <Menu size={20} strokeWidth={1.5} />
         </button>
-      </header>
+      </motion.header>
 
       <style>{`
+        .nav-link:hover { color: ${colors.text.primary} !important; }
+        .nav-link:focus-visible {
+          outline: 2px solid ${colors.text.primary};
+          outline-offset: 4px;
+          border-radius: 4px;
+        }
         @media (max-width: 767px) {
           .header-nav        { display: none !important; }
           .header-hamburger  { display: flex !important; }

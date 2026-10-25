@@ -325,6 +325,37 @@ title row fades out before the image does. Only transform and opacity animate.
 
 ---
 
+## 3c. Liquid-glass nav (added 2026-10-25)
+
+`components/layout/Header.tsx` keeps the same links, mono font, active dot and
+fixed position (top 1.5rem, centred). New pieces:
+
+| File | Role |
+|---|---|
+| `components/layout/NavGlass.tsx` | Glass layers behind the pill: backdrop (refraction or frosted), white tint, inset bevel edge. |
+| `components/layout/nav-glass-controls.ts` | `APPROVED_NAV_GLASS` defaults plus the live store. Production only ever reads the defaults. |
+| `components/layout/NavGlassTuner.tsx` | Dev-only Leva folder "Nav glass" with a "copy nav values" button. Includes a dev-only "force fallback" toggle. |
+| `lib/tokens.ts` | `colors.glass.*` (tint, edge light/shade, rim, shadow). |
+
+- **Refraction (Chromium only):** `backdrop-filter: url(#svg-filter) saturate()`.
+  The filter displaces the backdrop with blurred fractal noise. Chromium is
+  detected via `navigator.userAgentData` after hydration, so the server
+  render and Safari/Firefox use the frosted path: `blur() saturate()`.
+- **Approved defaults:** refraction 70, edgeWidth 3, backgroundOpacity 0.35,
+  saturation 1.6, fallbackBlur 16. Refraction is subtle over the hero because
+  the spheres are large flat colours, so it only shows at colour edges.
+- **Motion:** slides down on load (0.75s, 0.75s delay, ease-expo). Link hover
+  is a colour change; the old animated underline was removed, per CLAUDE.md
+  anti-AI rule 8. The active dot glides via a shared `layoutId`. Reduced
+  motion: no slide, the dot jumps.
+- **Not verified:** real Safari and Firefox. The fallback was checked by
+  forcing it in headless Edge. Claude in Chrome wasn't connected, so the
+  screenshots are headless Edge.
+- The pasted 21st.dev `liquid-glass-button` was used as a concept only. It
+  bundled unrelated Button/MetalButton code and had no license.
+
+---
+
 ## 4. Known issues
 
 - **Hydration warning with prefers-reduced-motion** (`Hero.tsx`, the name
@@ -422,7 +453,7 @@ title row fades out before the image does. Only transform and opacity animate.
    hero exit to match the spec: pinned near full size for about 70%, then a
    quick collapse to a speck at the centre, then About scrolls in. Add an
    About link to the nav. This is a bigger change, so plan first.
-3. **Liquid-glass pill nav** (reference: olegponyat.com's nav). Use real
+3. ~~**Liquid-glass pill nav**~~ Done 2026-10-25, see section 3c. (Reference: olegponyat.com's nav.) Use real
    refraction in Chromium (SVG displacement filter via `backdrop-filter: url()`)
    and a frosted `backdrop-filter: blur()` fallback in Safari and Firefox.
    Update `NAV_CLEARANCE` in `Hero.tsx` if the nav size changes.

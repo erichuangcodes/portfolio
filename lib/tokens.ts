@@ -24,6 +24,15 @@ export const colors = {
     subtle: "rgba(0, 0, 0, 0.08)",
     strong: "rgba(0, 0, 0, 0.16)",
   },
+  // Liquid-glass nav pill. The tint is an RGB triplet so the panel-tuned
+  // opacity can be applied to it.
+  glass: {
+    tintRgb: "255, 255, 255",
+    edgeLight: "rgba(255, 255, 255, 0.85)",
+    edgeShade: "rgba(8, 18, 45, 0.14)",
+    rim: "rgba(255, 255, 255, 0.55)",
+    shadow: "0 1px 2px rgba(8, 18, 45, 0.06), 0 8px 28px rgba(8, 18, 45, 0.10)",
+  },
   overlay: {
     // Pointer-tracked sheen on project cards: white at low alpha, not a glow.
     spotlight: "rgba(255, 255, 255, 0.22)",
