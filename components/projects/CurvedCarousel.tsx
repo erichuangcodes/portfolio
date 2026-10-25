@@ -68,6 +68,12 @@ export default function CurvedCarousel() {
   const movedRef = useRef(false);
   const panIgnoredRef = useRef(false);
   const panStartRef = useRef(0);
+  /** A real (non-ignored) pan is in progress for the current press. */
+  const panActiveRef = useRef(false);
+  /** The current press stopped a snap animation part-way. */
+  const interruptedRef = useRef(false);
+  /** A wheel scrub has moved the strip since the last commit. */
+  const scrubbingRef = useRef(false);
   const stageId = useId();
 
   const g = geometry ?? FALLBACK_GEOMETRY;
@@ -97,6 +103,7 @@ export default function CurvedCarousel() {
   // ── navigation ────────────────────────────────────────────────────────────
   const commit = (target: number, mode: SnapMode, velocity = 0) => {
     const t = g.loop ? target : Math.min(COUNT - 1, Math.max(0, target));
+    scrubbingRef.current = false;
     targetRef.current = t;
     setActiveIndex(mod(t, COUNT));
     animRef.current?.stop();
@@ -137,9 +144,29 @@ export default function CurvedCarousel() {
   };
 
   // ── drag / swipe ──────────────────────────────────────────────────────────
+  // Pressing catches a running snap. If the press turns out to be a plain
+  // click (no pan), the strip settles on the nearest card on release instead
+  // of being left between cards.
+  const handlePointerDownCapture = () => {
+    movedRef.current = false;
+    panActiveRef.current = false;
+    if (position.get() !== targetRef.current) {
+      animRef.current?.stop();
+      interruptedRef.current = true;
+    }
+  };
+
+  const settleAfterPress = () => {
+    if (panActiveRef.current || !interruptedRef.current) return;
+    interruptedRef.current = false;
+    commit(Math.round(position.get()), "tween");
+  };
+
   const handlePanStart = (_: PointerEvent, info: PanInfo) => {
     panIgnoredRef.current = Math.abs(info.offset.y) > Math.abs(info.offset.x);
     if (panIgnoredRef.current) return;
+    panActiveRef.current = true;
+    interruptedRef.current = false;
     animRef.current?.stop();
     panStartRef.current = Math.round(position.get());
     viewportRef.current?.setAttribute("data-dragging", "");
@@ -155,7 +182,10 @@ export default function CurvedCarousel() {
   };
 
   const handlePanEnd = (_: PointerEvent, info: PanInfo) => {
-    if (panIgnoredRef.current) return;
+    if (panIgnoredRef.current) {
+      settleAfterPress();
+      return;
+    }
     viewportRef.current?.removeAttribute("data-dragging");
     const v = -info.velocity.x / g.pitch;
     // Steps are counted from the card the gesture started on, not the card
@@ -172,10 +202,18 @@ export default function CurvedCarousel() {
   useHorizontalWheel(viewportRef, {
     onDelta: (dx) => {
       animRef.current?.stop();
-      const next = position.get() + dx / g.pitch;
-      position.set(g.loop ? next : Math.min(COUNT - 1, Math.max(0, next)));
+      const raw = position.get() + dx / g.pitch;
+      const next = g.loop ? raw : Math.min(COUNT - 1, Math.max(0, raw));
+      position.set(next);
+      // Keep the target in step, so an arrow key or button pressed mid-scrub
+      // steps from where the strip is, not from where the scrub began.
+      targetRef.current = Math.round(next);
+      scrubbingRef.current = true;
     },
-    onEnd: () => commit(Math.round(position.get()), "tween"),
+    onEnd: () => {
+      // Skip if a key or button already committed a target mid-stream.
+      if (scrubbingRef.current) commit(Math.round(position.get()), "tween");
+    },
   });
 
   // ── card links ────────────────────────────────────────────────────────────
@@ -185,7 +223,8 @@ export default function CurvedCarousel() {
       e.preventDefault();
       return;
     }
-    if (index !== activeIndex) {
+    // targetRef, not activeIndex: a settle on pointerup may have just moved it.
+    if (index !== mod(targetRef.current, COUNT)) {
       e.preventDefault();
       goTo(index, "tween");
     }
@@ -222,9 +261,9 @@ export default function CurvedCarousel() {
         ref={viewportRef}
         className="cursor-grab select-none data-[dragging]:cursor-grabbing"
         style={viewportStyle}
-        onPointerDownCapture={() => {
-          movedRef.current = false;
-        }}
+        onPointerDownCapture={handlePointerDownCapture}
+        onPointerUpCapture={settleAfterPress}
+        onPointerCancelCapture={settleAfterPress}
         onPanStart={handlePanStart}
         onPan={handlePan}
         onPanEnd={handlePanEnd}
