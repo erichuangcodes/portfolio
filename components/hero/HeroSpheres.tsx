@@ -61,7 +61,12 @@ function Atmosphere() {
   );
 }
 
-export default function HeroSpheres() {
+type Props = {
+  /** Stop rendering (e.g. while the hero is shrunk to a speck). */
+  paused?: boolean;
+};
+
+export default function HeroSpheres({ paused = false }: Props) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const scene = useSceneValues();
   const reduced = useReducedMotion();
@@ -92,7 +97,7 @@ export default function HeroSpheres() {
     >
       {SceneTuner ? <SceneTuner /> : null}
       <Canvas
-        frameloop={frozen ? "demand" : inView ? "always" : "never"}
+        frameloop={frozen ? "demand" : inView && !paused ? "always" : "never"}
         dpr={[1, 2]}
         camera={CAMERA}
         // Default measurement is debounced and scroll-aware, which lets the

@@ -3,8 +3,9 @@
 import {
   AnimatePresence,
   motion,
+  useMotionValueEvent,
   useReducedMotion,
-  useMotionValue,
+  useScroll,
   useTransform,
 } from "framer-motion";
 import { ChevronDown } from "lucide-react";
@@ -29,23 +30,26 @@ const LABEL_DWELL = 2400; // ms each label stays visible
 const expoEase = [0.16, 1, 0.3, 1] as const;
 const swiftEase = [0.65, 0, 0.35, 1] as const;
 
-// Card inset from the viewport edge, and its corner radius
-const HERO_INSET = "clamp(16px, 1.6vw, 24px)";
-
-// Top inset clears the fixed pill nav, which sits at top: 1.5rem (24px) and is
-// ~50px tall. Without this the card starts at HERO_INSET (16-24px) and spans
-// the full viewport height, so the nav is drawn on top of the card's own top
-// edge instead of above it.
-const NAV_CLEARANCE = "82px";
+// Corner radius of the hero card in its own (unscaled) pixels. The card is
+// shrunk with a transform, so the rounding scales down in proportion with it.
 const HERO_RADIUS = "clamp(18px, 1.8vw, 26px)";
 
-// Scroll distance the pinned card is held for. The extra 70svh past the card's
-// own height is the travel that drives the shrink.
-const HERO_SCROLL_RANGE = "170svh";
+// Smallest scale the card reaches: a speck at the centre of the screen.
+const SPECK_SCALE = 0.015;
 
-// Progress at which the pin releases (the container is 170svh tall and the
-// pinned card is 100svh, so 70/170 of the exit is the pinned phase).
-const PIN_END = 70 / 170;
+// Below this scale the speck is too small to read, so the WebGL scene stops
+// rendering until the card grows back past it.
+const PAUSE_BELOW_SCALE = 0.04;
+
+// Shrink curve: scale = 1 - (1 - SPECK_SCALE) * progress^SHRINK_POWER. A
+// power-in curve rather than one of the named easings, because those all
+// decelerate toward the end and this has to accelerate: barely moving at
+// first, then rushing down to the speck.
+const SHRINK_POWER = 2.4;
+
+function shrinkCurve(t: number): number {
+  return Math.pow(t, SHRINK_POWER);
+}
 
 // ─── letter entrance ──────────────────────────────────────────────────────────
 
@@ -98,36 +102,24 @@ export default function Hero() {
   const [paused, setPaused] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // ─── scroll-linked card transition ──────────────────────────────────────────
-  const scrollRangeRef = useRef<HTMLDivElement>(null);
-  // Progress through the hero's exit, 0 → 1. Measured directly off the
-  // container rather than useScroll({ target }): with a sticky child, that
-  // hook's measurement proved unreliable here, handing derived values
-  // whole-page progress instead of the container's.
-  const progress = useMotionValue(0);
+  // ─── scroll-linked shrink ───────────────────────────────────────────────────
+  // The wrapper is taller than the viewport (250svh, 180svh on phones); the
+  // card is pinned inside it, so progress runs 0 → 1 over the pinned travel and
+  // ends exactly as the pin releases and the next section starts to rise.
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: wrapperRef,
+    offset: ["start start", "end end"],
+  });
+  const cardScale = useTransform(scrollYProgress, [0, 1], [1, SPECK_SCALE], {
+    ease: shrinkCurve,
+  });
 
-  useEffect(() => {
-    const el = scrollRangeRef.current;
-    if (!el || reduced) return;
-
-    const update = () => {
-      const travel = el.offsetHeight;
-      const scrolled = -el.getBoundingClientRect().top;
-      progress.set(travel <= 0 ? 0 : Math.min(1, Math.max(0, scrolled / travel)));
-    };
-
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
-    return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-    };
-  }, [progress, reduced]);
-
-  // Shrink finishes as the pin releases, then the card scrolls away normally.
-  const cardScale = useTransform(progress, [0, PIN_END], [1, 0.88]);
-  const cardRadius = useTransform(progress, [0, PIN_END], [22, 44]);
+  const [scenePaused, setScenePaused] = useState(false);
+  useMotionValueEvent(cardScale, "change", (scale) => {
+    const shouldPause = scale < PAUSE_BELOW_SCALE;
+    setScenePaused((paused) => (paused === shouldPause ? paused : shouldPause));
+  });
 
   // Cycle labels every LABEL_DWELL ms, pause on hover
   useEffect(() => {
@@ -141,40 +133,32 @@ export default function Hero() {
   }, [paused]);
 
   return (
-    // Taller than the card so the pinned card has travel to animate over.
-    <div ref={scrollRangeRef} style={{ height: reduced ? undefined : HERO_SCROLL_RANGE }}>
-      {/* The page frame: the card is inset from the viewport, and this shade
-          showing through the gap is what makes it read as a framed object.
-          Pinned, so the next section rises over the card rather than pushing it. */}
-      <div
-        style={{
-          position: reduced ? "relative" : "sticky",
-          top: 0,
-          height: "100svh",
-          background: colors.scene.page,
-          padding: HERO_INSET,
-          paddingTop: NAV_CLEARANCE,
-          boxSizing: "border-box",
-        }}
-      >
+    // Tall wrapper = scroll travel for the shrink. Reduced motion collapses it
+    // to the card's own height, so the hero is just a normal first screen.
+    // White behind the card, matching the next section, so the speck sits on
+    // the same surface the page continues on.
+    <div
+      ref={wrapperRef}
+      className="relative h-[250svh] max-md:h-[180svh] motion-reduce:h-auto"
+      style={{ background: colors.bg.primary }}
+    >
+      <div className="sticky top-0 h-svh motion-reduce:relative">
         <motion.section
           id="home"
           style={{
             position: "relative",
-            height: `calc(100svh - ${NAV_CLEARANCE} - ${HERO_INSET})`,
+            width: "100%",
+            height: "100%",
             overflow: "hidden",
-            background: colors.scene.bg,
-            // Edge drawn as an inset ring rather than a real border: `inset: 0`
-            // on the canvas wrapper resolves against the padding box, so a
-            // 1px border holds the canvas 1px short of the card on every side.
-            boxShadow: `inset 0 0 0 1px ${colors.border.subtle}, ${shadow.card}`,
-            ...(reduced
-              ? { borderRadius: HERO_RADIUS }
-              : { scale: cardScale, borderRadius: cardRadius }),
+            background: colors.bg.primary,
+            borderRadius: HERO_RADIUS,
+            transformOrigin: "50% 50%",
+            boxShadow: shadow.card,
+            ...(reduced ? {} : { scale: cardScale }),
           }}
         >
           {/* Layer 0 — animated background */}
-          <HeroSpheres />
+          <HeroSpheres paused={scenePaused} />
 
           {/* Layer 10 — hero content */}
           <div style={{ position: "relative", zIndex: 10, height: "100%" }}>

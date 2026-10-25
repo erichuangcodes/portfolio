@@ -11,40 +11,40 @@ export default function Home() {
       <Hero />
 
       {/* ── Projects section ─────────────────────────────────────────────── */}
-      <RevealSection>
-        <section
-          id="projects"
+      {/* No reveal wrapper: this section follows the hero's shrink-to-speck
+          and should simply scroll up behind it. */}
+      <section
+        id="projects"
+        style={{
+          background:    colors.bg.primary,
+          paddingTop:    "8rem",
+          paddingBottom: "8rem",
+        }}
+      >
+        <div
           style={{
-            background:    colors.bg.primary,
-            paddingTop:    "8rem",
-            paddingBottom: "8rem",
+            paddingLeft:  "8%",
+            paddingRight: "8%",
+            marginBottom: "4rem",
           }}
         >
-          <div
-            style={{
-              paddingLeft:  "8%",
-              paddingRight: "8%",
-              marginBottom: "4rem",
-            }}
+          <p
+            className="text-mono-label"
+            style={{ color: colors.text.muted, marginBottom: "0.75rem" }}
           >
-            <p
-              className="text-mono-label"
-              style={{ color: colors.text.muted, marginBottom: "0.75rem" }}
-            >
-              Selected Work
-            </p>
-            <h2
-              className="text-display-md"
-              style={{ color: colors.text.primary, margin: 0 }}
-            >
-              From CAD model
-              <br />
-              to the real thing.
-            </h2>
-          </div>
-          <CurvedCarousel />
-        </section>
-      </RevealSection>
+            Selected Work
+          </p>
+          <h2
+            className="text-display-md"
+            style={{ color: colors.text.primary, margin: 0 }}
+          >
+            From CAD model
+            <br />
+            to the real thing.
+          </h2>
+        </div>
+        <CurvedCarousel />
+      </section>
 
       {/* ── Experience section ───────────────────────────────────────────── */}
       <RevealSection>
