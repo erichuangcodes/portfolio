@@ -3,22 +3,28 @@
 import {
   AnimatePresence,
   motion,
-  useMotionValueEvent,
+  useMotionValue,
   useReducedMotion,
   useScroll,
-  useTransform,
 } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { colors, easing, shadow } from "@/lib/tokens";
+import { DEV_TUNING, shrinkScale, useTransitionValues } from "./scroll-controls";
 
 // WebGL + physics + WASM: kept off the initial payload and out of SSR.
 const HeroSpheres = dynamic(() => import("./HeroSpheres"), {
   ssr: false,
   loading: () => null,
 });
+
+// Dev-only Leva panel for the shrink timing. DEV_TUNING is statically false
+// in production, so this import is dropped and Leva never ships.
+const ScrollTuner = DEV_TUNING
+  ? dynamic(() => import("./ScrollTuner"), { ssr: false, loading: () => null })
+  : null;
 
 // ─── constants ────────────────────────────────────────────────────────────────
 
@@ -33,23 +39,6 @@ const swiftEase = [0.65, 0, 0.35, 1] as const;
 // Corner radius of the hero card in its own (unscaled) pixels. The card is
 // shrunk with a transform, so the rounding scales down in proportion with it.
 const HERO_RADIUS = "clamp(18px, 1.8vw, 26px)";
-
-// Smallest scale the card reaches: a speck at the centre of the screen.
-const SPECK_SCALE = 0.015;
-
-// Below this scale the speck is too small to read, so the WebGL scene stops
-// rendering until the card grows back past it.
-const PAUSE_BELOW_SCALE = 0.04;
-
-// Shrink curve: scale = 1 - (1 - SPECK_SCALE) * progress^SHRINK_POWER. A
-// power-in curve rather than one of the named easings, because those all
-// decelerate toward the end and this has to accelerate: barely moving at
-// first, then rushing down to the speck.
-const SHRINK_POWER = 2.4;
-
-function shrinkCurve(t: number): number {
-  return Math.pow(t, SHRINK_POWER);
-}
 
 // ─── letter entrance ──────────────────────────────────────────────────────────
 
@@ -111,15 +100,43 @@ export default function Hero() {
     target: wrapperRef,
     offset: ["start start", "end end"],
   });
-  const cardScale = useTransform(scrollYProgress, [0, 1], [1, SPECK_SCALE], {
-    ease: shrinkCurve,
-  });
 
+  // Timing comes from a tunable store (dev-only Leva panel) rather than
+  // useTransform's keyframe/ease options, so a slider drag updates the card
+  // immediately — useTransform only recomputes on the next scroll event. Kept
+  // in a ref too: the scroll listener below subscribes once and must always
+  // read the latest timing, not the values from the render that set it up.
+  const timing = useTransitionValues();
+  const timingRef = useRef(timing);
+  useEffect(() => {
+    timingRef.current = timing;
+  }, [timing]);
+
+  const cardScale = useMotionValue(shrinkScale(scrollYProgress.get(), timing));
   const [scenePaused, setScenePaused] = useState(false);
-  useMotionValueEvent(cardScale, "change", (scale) => {
-    const shouldPause = scale < PAUSE_BELOW_SCALE;
-    setScenePaused((paused) => (paused === shouldPause ? paused : shouldPause));
-  });
+
+  const applyScale = useCallback(
+    (progress: number) => {
+      const v = timingRef.current;
+      const scale = shrinkScale(progress, v);
+      cardScale.set(scale);
+      setScenePaused((paused) => {
+        const shouldPause = scale < v.pauseBelowScale;
+        return paused === shouldPause ? paused : shouldPause;
+      });
+    },
+    [cardScale],
+  );
+
+  useEffect(() => {
+    return scrollYProgress.on("change", applyScale);
+  }, [scrollYProgress, applyScale]);
+
+  // Re-apply immediately on a timing change, so dragging a slider updates the
+  // card without needing to scroll first.
+  useEffect(() => {
+    applyScale(scrollYProgress.get());
+  }, [timing, applyScale, scrollYProgress]);
 
   // Cycle labels every LABEL_DWELL ms, pause on hover
   useEffect(() => {
@@ -142,6 +159,7 @@ export default function Hero() {
       className="relative h-[250svh] max-md:h-[180svh] motion-reduce:h-auto"
       style={{ background: colors.bg.primary }}
     >
+      {ScrollTuner ? <ScrollTuner /> : null}
       <div className="sticky top-0 h-svh motion-reduce:relative">
         <motion.section
           id="home"
