@@ -19,6 +19,7 @@ import {
   type KeyboardEvent,
   type MouseEvent,
 } from "react";
+import { useHorizontalWheel } from "@/hooks/useHorizontalWheel";
 import { projects } from "@/lib/projects";
 import { bezier, colors, duration, durationMs, easing } from "@/lib/tokens";
 import CarouselSlide from "./CarouselSlide";
@@ -162,6 +163,16 @@ export default function CurvedCarousel() {
     if (Math.abs(v) > FLICK_MIN_VELOCITY && t === base) t = base + Math.sign(v);
     commit(t, "spring", v);
   };
+
+  // ── horizontal trackpad wheel ─────────────────────────────────────────────
+  useHorizontalWheel(viewportRef, {
+    onDelta: (dx) => {
+      animRef.current?.stop();
+      const next = position.get() + dx / g.pitch;
+      position.set(g.loop ? next : Math.min(COUNT - 1, Math.max(0, next)));
+    },
+    onEnd: () => commit(Math.round(position.get()), "tween"),
+  });
 
   // ── card links ────────────────────────────────────────────────────────────
   const handleSelect = (index: number, e: MouseEvent<HTMLAnchorElement>) => {
