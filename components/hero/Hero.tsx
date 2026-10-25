@@ -31,6 +31,12 @@ const swiftEase = [0.65, 0, 0.35, 1] as const;
 
 // Card inset from the viewport edge, and its corner radius
 const HERO_INSET = "clamp(16px, 1.6vw, 24px)";
+
+// Top inset clears the fixed pill nav, which sits at top: 1.5rem (24px) and is
+// ~50px tall. Without this the card starts at HERO_INSET (16-24px) and spans
+// the full viewport height, so the nav is drawn on top of the card's own top
+// edge instead of above it.
+const NAV_CLEARANCE = "82px";
 const HERO_RADIUS = "clamp(18px, 1.8vw, 26px)";
 
 // Scroll distance the pinned card is held for. The extra 70svh past the card's
@@ -147,6 +153,7 @@ export default function Hero() {
           height: "100svh",
           background: colors.scene.page,
           padding: HERO_INSET,
+          paddingTop: NAV_CLEARANCE,
           boxSizing: "border-box",
         }}
       >
@@ -154,11 +161,13 @@ export default function Hero() {
           id="home"
           style={{
             position: "relative",
-            height: `calc(100svh - 2 * ${HERO_INSET})`,
+            height: `calc(100svh - ${NAV_CLEARANCE} - ${HERO_INSET})`,
             overflow: "hidden",
             background: colors.scene.bg,
-            border: `1px solid ${colors.border.subtle}`,
-            boxShadow: shadow.card,
+            // Edge drawn as an inset ring rather than a real border: `inset: 0`
+            // on the canvas wrapper resolves against the padding box, so a
+            // 1px border holds the canvas 1px short of the card on every side.
+            boxShadow: `inset 0 0 0 1px ${colors.border.subtle}, ${shadow.card}`,
             ...(reduced
               ? { borderRadius: HERO_RADIUS }
               : { scale: cardScale, borderRadius: cardRadius }),
