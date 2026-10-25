@@ -10,6 +10,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { spherePalette } from "@/lib/tokens";
 import { APPROVED_SCENE, useSceneValues } from "./scene-controls";
+import { heroDebug } from "./hero-debug";
 import {
   ANGULAR_DAMPING,
   BOUNDS_X,
@@ -192,6 +193,11 @@ export default function SphereField({ count, frozen }: Props) {
     syncPalette(scene.palette);
     invalidate();
   }, [scene.palette, invalidate]);
+
+  // TEMPORARY debug (dev only).
+  useEffect(() => {
+    heroDebug.frozenPath = frozen;
+  }, [frozen]);
 
   // Built once on mount: the seeded unit-ball layout scaled to the viewport.
   // Deliberately not recomputed on resize — that would restart the simulation.

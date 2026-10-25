@@ -1,8 +1,8 @@
 "use client";
 
-import { Canvas, useThree } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { DepthOfField, EffectComposer, N8AO } from "@react-three/postprocessing";
-import { Physics } from "@react-three/rapier";
+import { Physics, useAfterPhysicsStep } from "@react-three/rapier";
 import { useInView, useReducedMotion } from "framer-motion";
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
@@ -13,6 +13,27 @@ import { DEV_TUNING } from "@/lib/dev-tuning";
 import { useSceneValues } from "./scene-controls";
 import { buildEnvironment } from "./sphere-environment";
 import { CAMERA, sphereCountForViewport } from "./sphere-scene";
+import { heroDebug } from "./hero-debug";
+
+// TEMPORARY debug probes (dev only) — remove with hero-debug.ts.
+function PhysicsProbe() {
+  useEffect(() => {
+    heroDebug.rapierLoaded = true;
+    return () => {
+      heroDebug.rapierLoaded = false;
+    };
+  }, []);
+  useAfterPhysicsStep(() => {
+    heroDebug.steps++;
+  });
+  return null;
+}
+function FrameProbe() {
+  useFrame(() => {
+    heroDebug.frames++;
+  });
+  return null;
+}
 
 // Dev-only Leva panel. DEV_TUNING is statically false in production, so this
 // import is dropped and Leva never ships.
@@ -100,6 +121,28 @@ export default function HeroSpheres({ paused = false }: Props) {
   });
 
   const frozen = reduced === true;
+  const frameloop = frozen ? "demand" : inView && !paused ? "always" : "never";
+  const pauseReason = frozen
+    ? "reduced motion"
+    : !inView
+      ? "off-screen"
+      : paused
+        ? "shrink threshold"
+        : "running";
+
+  // TEMPORARY debug (dev only): mirror state and log pause/resume changes.
+  useEffect(() => {
+    if (!DEV_TUNING) return;
+    heroDebug.frameloop = frameloop;
+    heroDebug.pauseReason = pauseReason;
+    heroDebug.reducedMotionHook = reduced;
+    heroDebug.heroInView = inView;
+    console.info(
+      pauseReason === "running"
+        ? "[hero-debug] physics RUNNING (frameloop=always)"
+        : `[hero-debug] physics PAUSED: ${pauseReason} (frameloop=${frameloop})`,
+    );
+  }, [frameloop, pauseReason, reduced, inView]);
 
   return (
     <div
@@ -119,7 +162,7 @@ export default function HeroSpheres({ paused = false }: Props) {
     >
       {SceneTuner ? <SceneTuner /> : null}
       <Canvas
-        frameloop={frozen ? "demand" : inView && !paused ? "always" : "never"}
+        frameloop={frameloop}
         dpr={[1, 2]}
         camera={CAMERA}
         // Default measurement is debounced and scroll-aware, which lets the
@@ -148,10 +191,12 @@ export default function HeroSpheres({ paused = false }: Props) {
       >
         <Atmosphere />
 
+        {DEV_TUNING ? <FrameProbe /> : null}
         {frozen ? (
           <SphereField count={count} frozen />
         ) : (
           <Physics gravity={[0, 0, 0]}>
+            {DEV_TUNING ? <PhysicsProbe /> : null}
             <SphereField count={count} frozen={false} />
             <CursorRepeller />
           </Physics>
