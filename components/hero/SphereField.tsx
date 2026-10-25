@@ -202,6 +202,9 @@ export default function SphereField({ count, frozen }: Props) {
           args={[colorBArray, 3]}
         />
       </sphereGeometry>
+      {/* APPROVED LOOK (5ece2e2) — envMapIntensity is the scene's main soft
+          light. Lowering it flattens the spheres and tempts a key-light
+          increase, which is exactly what made them muddy. */}
       <meshPhysicalMaterial
         onBeforeCompile={applyGradientShader}
         customProgramCacheKey={GRADIENT_CACHE_KEY}
@@ -211,7 +214,7 @@ export default function SphereField({ count, frozen }: Props) {
         clearcoatRoughness={0.55}
         sheen={0.9}
         sheenRoughness={0.6}
-        envMapIntensity={1.0}
+        envMapIntensity={1.15}
       />
     </instancedMesh>
   );
