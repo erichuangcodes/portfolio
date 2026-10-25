@@ -184,6 +184,8 @@ coming from `sphere-scene.ts` and the palette from `lib/tokens.ts`.
 | Stage background | **`#FFFFFF`** (pure white) | `APPROVED_SCENE.background` |
 | Fog near / far | **0 / 160** | `FOG_NEAR`, `FOG_FAR` in `sphere-scene.ts` |
 | Centre pull | **0.75** | `CENTER_PULL` in `sphere-scene.ts` |
+| Balloon opacity (centre / edge) | **0.85 / 1.0** | `APPROVED_SCENE.opacity`, `.edgeOpacity` |
+| Fresnel falloff | **2.5** | `APPROVED_SCENE.fresnelPower` |
 
 Palette (`spherePalette` in `lib/tokens.ts`), in ring order:
 1. `#B9A7F0` lavender
@@ -463,6 +465,25 @@ variables.
 **Verified:** page and section heights, loaded fonts, and pixel-identical
 Projects and Experience screenshots at 1440 and 375, before and after.
 `README.md` was rewritten as a short real readme.
+
+---
+
+## 3h. Balloon translucency (2026-10-25)
+
+The spheres are slightly see-through.
+
+- **Shader:** in `SphereField.tsx`, an alpha term in the existing
+  `onBeforeCompile` patch goes from `opacity` in the centre to `edgeOpacity`
+  at the rim (fresnel, `fresnelPower`). Specular highlights are forced opaque
+  so they stay crisp. No transmission is used.
+- **Sorting:** three.js doesn't sort instances inside one mesh. The physics
+  mesh is now an invisible source (`visible={false}`, low-poly, still used for
+  the colliders). Each frame, a visible draw mesh copies its matrices and
+  colours sorted back-to-front.
+- **AO:** the spheres keep writing depth, and `userData.treatAsOpaque` keeps
+  N8AO treating them as opaque.
+- **Tuning:** the Leva "Balloon" folder has opacity, edge opacity and fresnel
+  falloff. They're included in "copy values".
 
 ---
 

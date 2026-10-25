@@ -42,6 +42,12 @@ export const APPROVED_SCENE = {
   fogFar: FOG_FAR,
   centerPull: CENTER_PULL,
   palette: [...spherePalette] as string[],
+  /** Balloon translucency: alpha at the centre of each sphere… */
+  opacity: 0.85,
+  /** …rising to this at the rim (fresnel). */
+  edgeOpacity: 1,
+  /** How quickly alpha rises toward the rim. Higher = thinner opaque edge. */
+  fresnelPower: 2.5,
 } as const satisfies SceneShape;
 
 type SceneShape = {
@@ -55,6 +61,9 @@ type SceneShape = {
   fogFar: number;
   centerPull: number;
   palette: readonly string[];
+  opacity: number;
+  edgeOpacity: number;
+  fresnelPower: number;
 };
 
 export type SceneValues = {
@@ -118,6 +127,10 @@ export function formatSceneValues(v: SceneValues): string {
     `  ${changed("FOG_NEAR", v.fogNear, APPROVED_SCENE.fogNear)}`,
     `  ${changed("FOG_FAR", v.fogFar, APPROVED_SCENE.fogFar)}`,
     `  ${changed("CENTER_PULL", v.centerPull, APPROVED_SCENE.centerPull)}`,
+    "// components/hero/scene-controls.ts, APPROVED_SCENE (balloon):",
+    `  ${changed("opacity", v.opacity, APPROVED_SCENE.opacity)}`,
+    `  ${changed("edgeOpacity", v.edgeOpacity, APPROVED_SCENE.edgeOpacity)}`,
+    `  ${changed("fresnelPower", v.fresnelPower, APPROVED_SCENE.fresnelPower)}`,
   ].join("\n");
 }
 

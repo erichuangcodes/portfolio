@@ -33,6 +33,11 @@ export default function SceneTuner() {
       fogFar: { value: APPROVED_SCENE.fogFar, min: 1, max: 160, step: 0.5 },
       centerPull: { value: APPROVED_SCENE.centerPull, min: 0, max: 2, step: 0.01 },
     }),
+    Balloon: folder({
+      opacity: { value: APPROVED_SCENE.opacity, min: 0.3, max: 1, step: 0.01 },
+      edgeOpacity: { value: APPROVED_SCENE.edgeOpacity, min: 0.3, max: 1, step: 0.01, label: "edge opacity" },
+      fresnelPower: { value: APPROVED_SCENE.fresnelPower, min: 0.5, max: 8, step: 0.1, label: "fresnel falloff" },
+    }),
     Palette: folder({
       hue1: { value: APPROVED_SCENE.palette[0], label: "1 lavender" },
       hue2: { value: APPROVED_SCENE.palette[1], label: "2 baby blue" },
@@ -53,6 +58,9 @@ export default function SceneTuner() {
         fogFar: get("Stage.fogFar"),
         centerPull: get("Stage.centerPull"),
         palette: [1, 2, 3, 4, 5, 6].map((n) => get(`Palette.hue${n}`)),
+        opacity: get("Balloon.opacity"),
+        edgeOpacity: get("Balloon.edgeOpacity"),
+        fresnelPower: get("Balloon.fresnelPower"),
       };
       const code = formatSceneValues(snapshot);
       try {
@@ -76,6 +84,9 @@ export default function SceneTuner() {
       fogNear: values.fogNear,
       fogFar: values.fogFar,
       centerPull: values.centerPull,
+      opacity: values.opacity,
+      edgeOpacity: values.edgeOpacity,
+      fresnelPower: values.fresnelPower,
       palette: [
         values.hue1,
         values.hue2,
