@@ -301,7 +301,7 @@ function ContentSection({
       <div>
         <p
           className="text-label"
-          style={{ color: colors.accent.primary, marginBottom: "1rem" }}
+          style={{ color: colors.accent.text, marginBottom: "1rem" }}
         >
           {String(index + 1).padStart(2, "0")}
         </p>

@@ -15,12 +15,13 @@ export const colors = {
     secondary: "#404040",
     muted: "#737373",
   },
+  // Site accent, defined as CSS variables in app/globals.css (:root) so the
+  // dev panel can retheme it live. primary: dots, lines, large text.
+  // soft: tints and glows. text: small text (AA on the off-white).
   accent: {
-    // TODO: verify exact hex against antimetal.com via DevTools before shipping
-    primary: "#edd97e",
-    // Deep lavender from the sphere palette, dark enough for text on the
-    // off-white (about 6.6:1 on bg.secondary).
-    deep: "#5B47B8",
+    primary: "var(--accent)",
+    soft: "var(--accent-soft)",
+    text: "var(--accent-text)",
     glow: "rgba(126, 181, 237, 0.15)",
   },
   border: {

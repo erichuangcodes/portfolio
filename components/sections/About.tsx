@@ -66,7 +66,7 @@ export default function About() {
 
       <style>{`
         .about-link { transition: color 300ms ${easing.swift}; }
-        .about-link:hover { color: ${colors.accent.deep} !important; }
+        .about-link:hover { color: ${colors.accent.text} !important; }
         .about-link:focus-visible {
           outline: 2px solid ${colors.text.primary};
           outline-offset: 3px;

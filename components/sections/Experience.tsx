@@ -184,7 +184,7 @@ export default function Experience() {
                   height: "13px",
                   borderRadius: "50%",
                   background: colors.accent.primary,
-                  boxShadow: `0 0 10px ${colors.accent.primary}, 0 0 22px ${colors.accent.primary}50`,
+                  boxShadow: `0 0 0 4px ${colors.accent.soft}`,
                   zIndex: 2,
                 }}
               />

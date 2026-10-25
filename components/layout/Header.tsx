@@ -13,6 +13,9 @@ import { DEV_TUNING } from "./nav-glass-controls";
 const NavGlassTuner = DEV_TUNING
   ? dynamic(() => import("./NavGlassTuner"), { ssr: false, loading: () => null })
   : null;
+const AccentTuner = DEV_TUNING
+  ? dynamic(() => import("./AccentTuner"), { ssr: false, loading: () => null })
+  : null;
 
 // ─── nav links ────────────────────────────────────────────────────────────────
 
@@ -262,6 +265,7 @@ export default function Header() {
   return (
     <>
       {NavGlassTuner ? <NavGlassTuner /> : null}
+      {AccentTuner ? <AccentTuner /> : null}
 
       {/* ── Liquid-glass pill nav ─────────────────────────────────────────── */}
       <motion.header

@@ -63,7 +63,7 @@ export default function TypingGreeting({ phrases }: { phrases: readonly string[]
         fontWeight: 500,
         lineHeight: 1.1,
         letterSpacing: "-0.015em",
-        color: colors.accent.deep,
+        color: colors.accent.primary,
         margin: 0,
         minHeight: "1.1em",
         whiteSpace: "nowrap",

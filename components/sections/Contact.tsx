@@ -67,7 +67,7 @@ function EmailLink() {
         style={{
           display:        "block",
           textDecoration: "none",
-          color:          hovered ? colors.accent.primary : colors.text.primary,
+          color:          hovered ? colors.accent.text : colors.text.primary,
           transition:     "color 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
         }}
       >

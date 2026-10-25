@@ -413,6 +413,26 @@ links and the song. The current copy is all marked PLACEHOLDER.
 
 ---
 
+## 3f. Site accent (2026-10-25)
+
+The old yellow accent is gone. The accent now comes from CSS variables in
+`app/globals.css` (`:root`):
+- `--accent`: default `#6e56f8` (Iris).
+- `--accent-soft`: `--accent` mixed 18% into white, for tints.
+- `--accent-text`: `--accent` mixed 72% with black, for small text. It clears
+  4.5:1 on the off-white for every preset.
+
+`colors.accent.primary`, `.soft` and `.text` in `lib/tokens.ts` point at these
+variables.
+
+- The dev-only Leva "Accent" folder (`components/layout/AccentTuner.tsx`) has
+  a colour picker, Iris/Cobalt/Coral/Ink preset buttons and "copy accent
+  value".
+- shadcn's own grey `--accent` was renamed to `--accent-ui`.
+- The Experience timeline dot's yellow glow is now a soft accent ring.
+
+---
+
 ## 4. Known issues
 
 - **Hydration warning with prefers-reduced-motion** (`Hero.tsx`, the name
