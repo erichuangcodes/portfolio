@@ -41,7 +41,7 @@ const ICONS: Record<string, Icon> = {
 };
 
 /** Seconds per item for one pass, so speed stays steady as the list changes. */
-const SECONDS_PER_ITEM = 2.4;
+const SECONDS_PER_ITEM = 1.8;
 
 export default function ToolsBand() {
   const ref = useRef<HTMLDivElement>(null);
@@ -76,8 +76,8 @@ export default function ToolsBand() {
         .tools-band {
           --tool-size: 48px;
           --tool-gap: 4rem;
-          /* About 8 logos visible at once, centred rather than full-bleed. */
-          width: min(100%, calc(8 * (var(--tool-size) + var(--tool-gap))));
+          /* About 10 logos visible at once, centred rather than full-bleed. */
+          width: min(100%, calc(10 * (var(--tool-size) + var(--tool-gap))));
           margin: 0 auto;
           overflow: hidden;
           padding: 0.5rem 0 1.75rem;
