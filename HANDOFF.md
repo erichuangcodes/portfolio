@@ -341,8 +341,8 @@ fixed position (top 1.5rem, centred). New pieces:
   The filter displaces the backdrop with blurred fractal noise. Chromium is
   detected via `navigator.userAgentData` after hydration, so the server
   render and Safari/Firefox use the frosted path: `blur() saturate()`.
-- **Approved defaults:** refraction 70, edgeWidth 3, backgroundOpacity 0.35,
-  saturation 1.6, fallbackBlur 16. Refraction is subtle over the hero because
+- **Approved defaults:** refraction 95, edgeWidth 12, backgroundOpacity 0.35,
+  saturation 2.15, fallbackBlur 16. Refraction is subtle over the hero because
   the spheres are large flat colours, so it only shows at colour edges.
 - **Motion:** slides down on load (0.75s, 0.75s delay, ease-expo). Link hover
   is a colour change; the old animated underline was removed, per CLAUDE.md

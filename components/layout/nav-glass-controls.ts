@@ -11,13 +11,13 @@ export const DEV_TUNING = process.env.NODE_ENV === "development";
 
 export const APPROVED_NAV_GLASS = {
   /** feDisplacementMap scale: how far the backdrop is bent (Chromium only). */
-  refraction: 70,
+  refraction: 95,
   /** Width in px of the bright/dark inset bevel that reads as a glass edge. */
-  edgeWidth: 3,
+  edgeWidth: 12,
   /** Opacity of the white tint over the backdrop. */
   backgroundOpacity: 0.35,
   /** Backdrop saturation boost, applied on both paths. */
-  saturation: 1.6,
+  saturation: 2.15,
   /** Blur in px for the frosted fallback (Safari, Firefox). */
   fallbackBlur: 16,
 } as const satisfies NavGlassShape;
