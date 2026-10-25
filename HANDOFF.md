@@ -490,6 +490,26 @@ The spheres are slightly see-through.
 
 ---
 
+## 3i. Tools band (2026-10-25)
+
+`components/sections/ToolsBand.tsx` sits between About and Projects
+(`app/page.tsx`). The content (heading, plus a tool list of name and
+simple-icons slug) lives in `about.tools` in `lib/about.ts`.
+
+- **Logos:** from the `simple-icons` package, via named imports in the
+  component's `ICONS` map. A new slug must be added there too. The icons are
+  tinted with `--accent` at 0.42 opacity and go to full opacity on hover.
+- **Text labels:** used for Fusion 360 (only a generic Autodesk logo exists),
+  Inventor, Onshape and CapCut (not in simple-icons).
+- **Motion:** a CSS marquee. The list is rendered twice and the track slides
+  `-50%`, linearly, at about 3.2s per item. The edges fade out with a mask.
+- **Pausing:** it pauses on hover (and shows the tool name in Geist) and when
+  off-screen (`useInView`).
+- **Reduced motion:** a static row.
+- **Removing the heading:** set `about.tools.heading` to `null`.
+
+---
+
 ## 4. Known issues
 
 - **Hydration warning with prefers-reduced-motion** (`Hero.tsx`, the name

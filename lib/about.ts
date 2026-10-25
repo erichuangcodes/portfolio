@@ -8,6 +8,12 @@ export type AboutPhoto = {
   alt: string;
 };
 
+export type AboutTool = {
+  name: string;
+  /** simple-icons slug, or null for a text label. */
+  icon: string | null;
+};
+
 export type AboutLink = {
   label: string;
   /** null hides the link. */
@@ -55,5 +61,32 @@ export const about = {
     artist: "The Weeknd",
     // Cover art lives in /public/about. null shows a placeholder.
     albumArt: "/about/house-of-balloons.png" as string | null,
+  },
+
+  /**
+   * Sliding tool band between About and Projects. Order here is the order on
+   * screen. `icon` is a simple-icons slug; null shows the name as a text label.
+   * A new slug also needs adding to ICONS in components/sections/ToolsBand.tsx.
+   */
+  tools: {
+    /** Small heading above the band. Set to null to hide it. */
+    heading: "Tools I build with" as string | null,
+    items: [
+      { name: "Fusion 360", icon: null }, // only a generic Autodesk logo exists
+      { name: "Inventor", icon: null }, // not in simple-icons
+      { name: "AutoCAD", icon: "autocad" },
+      { name: "Onshape", icon: null }, // not in simple-icons
+      { name: "Arduino", icon: "arduino" },
+      { name: "C++", icon: "cplusplus" },
+      { name: "Python", icon: "python" },
+      { name: "JavaScript", icon: "javascript" },
+      { name: "Node.js", icon: "nodedotjs" },
+      { name: "React", icon: "react" },
+      { name: "LVGL", icon: "lvgl" },
+      { name: "QMK", icon: "qmk" },
+      { name: "CorelDRAW", icon: "coreldraw" },
+      { name: "DaVinci Resolve", icon: "davinciresolve" },
+      { name: "CapCut", icon: null }, // not in simple-icons
+    ] satisfies AboutTool[],
   },
 };

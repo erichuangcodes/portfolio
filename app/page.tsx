@@ -1,5 +1,6 @@
 import Hero from "@/components/hero/Hero";
 import About from "@/components/sections/About";
+import ToolsBand from "@/components/sections/ToolsBand";
 import CurvedCarousel from "@/components/projects/CurvedCarousel";
 import Experience from "@/components/sections/Experience";
 import Contact from "@/components/sections/Contact";
@@ -12,6 +13,8 @@ export default function Home() {
       <Hero />
 
       <About />
+
+      <ToolsBand />
 
       {/* ── Projects section ─────────────────────────────────────────────── */}
       <section
