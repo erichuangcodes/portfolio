@@ -24,6 +24,10 @@ export const colors = {
     subtle: "rgba(0, 0, 0, 0.08)",
     strong: "rgba(0, 0, 0, 0.16)",
   },
+  overlay: {
+    // Pointer-tracked sheen on project cards: white at low alpha, not a glow.
+    spotlight: "rgba(255, 255, 255, 0.22)",
+  },
   // Hero sphere scene — warm off-white stage with a warm key and a cool rim
   scene: {
     bg: "#F4F1EC",
@@ -70,6 +74,15 @@ export const easing = {
   swift: "cubic-bezier(0.65, 0, 0.35, 1)",  // UI transitions
   spring: "cubic-bezier(0.34, 1.56, 0.64, 1)", // emphasis / overshoot
 } as const;
+
+// The same curves as control-point tuples, for framer-motion `ease` options
+// (framer takes arrays, not CSS strings). Keep in sync with `easing` above.
+type Bezier = readonly [number, number, number, number];
+export const bezier = {
+  expo: [0.16, 1, 0.3, 1],
+  swift: [0.65, 0, 0.35, 1],
+  spring: [0.34, 1.56, 0.64, 1],
+} as const satisfies Record<keyof typeof easing, Bezier>;
 
 // ---------------------------------------------------------------------------
 // Durations (ms)

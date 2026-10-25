@@ -311,3 +311,15 @@ export const projects: Project[] = [
     ],
   },
 ];
+
+// Card cover for the projects carousel: the hero image if one is set, else the
+// first section image, else null (the card shows a token placeholder). Kept
+// separate from `heroImage` so low-res section shots never end up full-bleed
+// on the detail page hero.
+export function getCoverImage(p: Project): string | null {
+  if (p.heroImage) return p.heroImage;
+  for (const section of p.sections) {
+    if (section.images.length > 0) return section.images[0];
+  }
+  return null;
+}
