@@ -428,9 +428,8 @@ The old yellow accent is gone. The accent now comes from CSS variables in
 `colors.accent.primary`, `.soft`, `.strong` and `.text` in `lib/tokens.ts` point at these
 variables.
 
-- The dev-only Leva "Accent" folder (`components/layout/AccentTuner.tsx`) has
-  a colour picker, Iris/Cobalt/Coral/Ink preset buttons and "copy accent
-  value".
+- There is no Leva control for the accent. The Accent folder was removed at
+  Eric's request; change `--accent` in `app/globals.css` directly.
 - shadcn's own grey `--accent` was renamed to `--accent-ui`.
 - The Experience timeline dot's yellow glow is now a soft accent ring.
 
@@ -504,6 +503,12 @@ variables.
 4. **Lighting and colour changes go through the Leva panel and Eric's
    approval.** Don't adjust these by eye or on your own initiative. Eric tunes,
    presses "copy values" and pastes, and you commit what was pasted, exactly.
+
+6. **Running `npm run build` while the dev server is up corrupts the dev
+   server's CSS.** Both write to `.next`. The dev server then keeps serving
+   stale `globals.css`, with old variables and missing new classes, and
+   changes appear not to apply. After any production build, restart
+   `npm run dev`, or build into a separate copy.
 
 ---
 
