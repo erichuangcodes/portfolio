@@ -31,7 +31,12 @@ export default function Home() {
         >
           <h2
             className="text-display-lg"
-            style={{ color: colors.accent.strong, margin: 0 }}
+            style={{
+              color: colors.accent.strong,
+              margin: 0,
+              fontFamily: "var(--font-fraunces)",
+              fontOpticalSizing: "auto",
+            }}
           >
             Selected Work
           </h2>

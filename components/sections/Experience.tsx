@@ -121,12 +121,18 @@ export default function Experience() {
       }}
     >
       <div style={{ paddingLeft: "8%", paddingRight: "8%" }}>
-        <p
-          className="text-eyebrow"
-          style={{ color: colors.text.muted, margin: "0 0 5rem" }}
+        <h2
+          className="text-display-lg"
+          style={{
+            color: colors.accent.strong,
+            margin: "0 0 5rem",
+            fontFamily: "var(--font-fraunces)",
+            fontOpticalSizing: "auto",
+            textAlign: "right",
+          }}
         >
           Experience
-        </p>
+        </h2>
 
         {/*
           3-column grid. Timeline (col 1) spans all entry rows via gridRow.
