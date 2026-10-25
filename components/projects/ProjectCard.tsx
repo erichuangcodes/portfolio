@@ -131,7 +131,7 @@ export default function ProjectCard({
           ) : (
             <span
               className="text-mono-label"
-              style={{ position: "absolute", left: 16, bottom: 16, right: 16, color: colors.text.muted }}
+              style={{ position: "absolute", left: 16, bottom: 16, right: 16, color: colors.text.secondary }}
             >
               {project.role}
             </span>
