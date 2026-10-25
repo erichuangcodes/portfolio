@@ -117,8 +117,8 @@ so it reads as a mass, not a ball floating in a frame.
 - **Layout:** seeded (`mulberry32`, seed `20260224`). `Math.random` is banned
   in render by the `react-hooks/purity` lint rule. Positions are uniform in a
   unit ball, scaled to an ellipsoid with `BOUNDS_X 0.58` and `BOUNDS_Y 0.62` of
-  the visible viewport and `BOUNDS_Z 3.4`. Radii run from 0.5 to 1.7, biased
-  small. The layout is built once on mount and is never rebuilt on resize,
+  the visible viewport and `BOUNDS_Z 3.4`. Radii run from 0.9 to 1.8, biased toward
+  medium-large (no small spheres since 2026-10-25). The layout is built once on mount and is never rebuilt on resize,
   since a rebuild would restart the sim.
 - **Centre pull:** every frame, each body gets an impulse toward the centre
   scaled by `centerPull`. Past the ellipsoid bounds the pull stiffens by
@@ -157,7 +157,8 @@ so it reads as a mass, not a ball floating in a frame.
   - The scene is lazy-loaded with `ssr: false`, so three/rapier/postprocessing
     stay off the initial payload. `CLAUDE.md` documents this as the one
     exception to the 250kb budget.
-  - Sphere count by width: 55 below 768px, 95 below 1280px, 150 otherwise.
+  - Sphere count by width: 24 below 768px, 40 below 1280px, 64 otherwise
+    (cut from 55/95/150 when the spheres got bigger).
   - Postprocessing only runs at ≥768px.
   - DPR is capped at `[1, 2]` and `antialias: false`.
   - `useInView` (100px margin) switches `frameloop` to `"never"` when the hero
@@ -186,6 +187,8 @@ coming from `sphere-scene.ts` and the palette from `lib/tokens.ts`.
 | Centre pull | **0.75** | `CENTER_PULL` in `sphere-scene.ts` |
 | Balloon opacity (centre / edge) | **0.7 / 0.7** | `APPROVED_SCENE.opacity`, `.edgeOpacity` |
 | Fresnel falloff | **2.5** | `APPROVED_SCENE.fresnelPower` |
+| Sphere radius (min / max) | **0.9 / 1.8** | `RADIUS_MIN`, `RADIUS_MAX` in `sphere-scene.ts` |
+| Sphere count (desktop / tablet / phone) | **64 / 40 / 24** | `COUNT_*` in `sphere-scene.ts` |
 
 Palette (`spherePalette` in `lib/tokens.ts`), in ring order:
 1. `#B9A7F0` lavender

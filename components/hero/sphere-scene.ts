@@ -36,8 +36,17 @@ export const BOUNDS_X = 0.58;
 export const BOUNDS_Y = 0.62;
 export const BOUNDS_Z = 3.4;
 
-export const RADIUS_MIN = 0.5;
-export const RADIUS_MAX = 1.7;
+// No small spheres: the smallest is about the old median size. Sizes are
+// weighted toward medium-large (see buildInstances).
+export const RADIUS_MIN = 0.9;
+export const RADIUS_MAX = 1.8;
+const RADIUS_BIAS = 0.8; // < 1 leans the distribution toward the large end
+
+// Counts per viewport tier. Cut from 150/95/55 when the spheres grew: the
+// average sphere now has about 2.4x the volume, so this keeps a similar fill.
+export const COUNT_DESKTOP = 64; // >= 1280px
+export const COUNT_TABLET = 40; // >= 768px
+export const COUNT_MOBILE = 24;
 
 // Seconds for one trip through the palette ring
 export const HUE_PERIOD_MIN = 20;
@@ -70,14 +79,21 @@ export function mulberry32(seed: number): () => number {
 }
 
 // Counts are tuned against the bounds volume, which shrinks much faster than
-// the width does — holding 150 on a phone would jam the spheres solid.
-export function sphereCountForViewport(width: number): number {
-  if (width < 768) return 55;
-  if (width < 1280) return 95;
-  return 150;
+// the width does, so phones get far fewer spheres.
+export function sphereCountForViewport(
+  width: number,
+  counts: { countDesktop: number; countTablet: number; countMobile: number },
+): number {
+  if (width < 768) return counts.countMobile;
+  if (width < 1280) return counts.countTablet;
+  return counts.countDesktop;
 }
 
-export function buildInstances(count: number): SphereInstance[] {
+export function buildInstances(
+  count: number,
+  minRadius: number = RADIUS_MIN,
+  maxRadius: number = RADIUS_MAX,
+): SphereInstance[] {
   const rand = mulberry32(SEED);
   const out: SphereInstance[] = [];
 
@@ -95,7 +111,7 @@ export function buildInstances(count: number): SphereInstance[] {
         r * Math.cos(phi),
       ],
       // Biased toward the small end so a few large spheres read as foreground
-      radius: RADIUS_MIN + (RADIUS_MAX - RADIUS_MIN) * Math.pow(rand(), 1.7),
+      radius: minRadius + (maxRadius - minRadius) * Math.pow(rand(), RADIUS_BIAS),
       huePhase: rand(),
       huePeriod: HUE_PERIOD_MIN + rand() * (HUE_PERIOD_MAX - HUE_PERIOD_MIN),
       huePair: 0.06 + rand() * 0.08,

@@ -10,7 +10,6 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { spherePalette } from "@/lib/tokens";
 import { APPROVED_SCENE, useSceneValues } from "./scene-controls";
-import { heroDebug } from "./hero-debug";
 import {
   ANGULAR_DAMPING,
   BOUNDS_X,
@@ -201,15 +200,10 @@ export default function SphereField({ count, frozen }: Props) {
     invalidate();
   }, [scene.palette, invalidate]);
 
-  // TEMPORARY debug (dev only).
-  useEffect(() => {
-    heroDebug.frozenPath = frozen;
-  }, [frozen]);
-
   // Built once on mount: the seeded unit-ball layout scaled to the viewport.
   // Deliberately not recomputed on resize — that would restart the simulation.
   const [{ seeds, instances, colorBArray, colorASrc, colorBSrc, order, depth }] = useState(() => {
-    const built = buildInstances(count);
+    const built = buildInstances(count, scene.minRadius, scene.maxRadius);
     const bx = Math.max(viewport.width, 1) * BOUNDS_X;
     const by = Math.max(viewport.height, 1) * BOUNDS_Y;
 
@@ -271,27 +265,6 @@ export default function SphereField({ count, frozen }: Props) {
       if (!draw.instanceColor) draw.setColorAt(0, scratch.current.setRGB(1, 1, 1));
       computeColors(colorASrc, colorBSrc, seeds, time, scratch.current);
       writeSorted(mesh, draw, colorB.current, colorASrc, colorBSrc, state.camera, order, depth);
-
-      // TEMPORARY debug (dev only): did the bodies move, and did the copy land?
-      const src = mesh.instanceMatrix.array as Float32Array;
-      const dst = draw.instanceMatrix.array as Float32Array;
-      let s = 0;
-      let d = 0;
-      for (let i = 0; i < count; i++) {
-        s += src[i * 16 + 12] + src[i * 16 + 13] + src[i * 16 + 14];
-        d += dst[i * 16 + 12] + dst[i * 16 + 13] + dst[i * 16 + 14];
-      }
-      heroDebug.sourceChecksum = s;
-      heroDebug.drawChecksum = d;
-    }
-    const dbgBodies = bodiesRef.current;
-    if (dbgBodies && dbgBodies.length) {
-      let v = 0;
-      for (const b of dbgBodies) {
-        const lv = b.linvel();
-        v += Math.hypot(lv.x, lv.y, lv.z);
-      }
-      heroDebug.bodySpeed = v / dbgBodies.length;
     }
 
     const bodies = bodiesRef.current;

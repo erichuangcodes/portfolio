@@ -9,7 +9,16 @@
 
 import { useSyncExternalStore } from "react";
 import { spherePalette } from "@/lib/tokens";
-import { CENTER_PULL, FOG_FAR, FOG_NEAR } from "./sphere-scene";
+import {
+  CENTER_PULL,
+  COUNT_DESKTOP,
+  COUNT_MOBILE,
+  COUNT_TABLET,
+  FOG_FAR,
+  FOG_NEAR,
+  RADIUS_MAX,
+  RADIUS_MIN,
+} from "./sphere-scene";
 
 
 // ---------------------------------------------------------------------------
@@ -48,6 +57,11 @@ export const APPROVED_SCENE = {
   edgeOpacity: 0.7,
   /** How quickly alpha rises toward the rim. Higher = thinner opaque edge. */
   fresnelPower: 2.5,
+  minRadius: RADIUS_MIN,
+  maxRadius: RADIUS_MAX,
+  countDesktop: COUNT_DESKTOP,
+  countTablet: COUNT_TABLET,
+  countMobile: COUNT_MOBILE,
 } as const satisfies SceneShape;
 
 type SceneShape = {
@@ -64,6 +78,11 @@ type SceneShape = {
   opacity: number;
   edgeOpacity: number;
   fresnelPower: number;
+  minRadius: number;
+  maxRadius: number;
+  countDesktop: number;
+  countTablet: number;
+  countMobile: number;
 };
 
 export type SceneValues = {
@@ -131,6 +150,12 @@ export function formatSceneValues(v: SceneValues): string {
     `  ${changed("opacity", v.opacity, APPROVED_SCENE.opacity)}`,
     `  ${changed("edgeOpacity", v.edgeOpacity, APPROVED_SCENE.edgeOpacity)}`,
     `  ${changed("fresnelPower", v.fresnelPower, APPROVED_SCENE.fresnelPower)}`,
+    "// components/hero/sphere-scene.ts (sizes and counts):",
+    `  ${changed("RADIUS_MIN", v.minRadius, APPROVED_SCENE.minRadius)}`,
+    `  ${changed("RADIUS_MAX", v.maxRadius, APPROVED_SCENE.maxRadius)}`,
+    `  ${changed("COUNT_DESKTOP", v.countDesktop, APPROVED_SCENE.countDesktop)}`,
+    `  ${changed("COUNT_TABLET", v.countTablet, APPROVED_SCENE.countTablet)}`,
+    `  ${changed("COUNT_MOBILE", v.countMobile, APPROVED_SCENE.countMobile)}`,
   ].join("\n");
 }
 

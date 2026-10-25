@@ -11,7 +11,6 @@ import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { bezier, colors, shadow } from "@/lib/tokens";
 import { DEV_TUNING } from "@/lib/dev-tuning";
-import { heroDebug } from "./hero-debug";
 import {
   collapseOpacity,
   collapseScale,
@@ -26,11 +25,6 @@ const HeroSpheres = dynamic(() => import("./HeroSpheres"), {
 
 // Dev-only Leva panel for the shrink timing. DEV_TUNING is statically false
 // in production, so this import is dropped and Leva never ships.
-// TEMPORARY debug readout (dev only).
-const HeroDebugOverlay = DEV_TUNING
-  ? dynamic(() => import("./HeroDebugOverlay"), { ssr: false, loading: () => null })
-  : null;
-
 const ScrollTuner = DEV_TUNING
   ? dynamic(() => import("./ScrollTuner"), { ssr: false, loading: () => null })
   : null;
@@ -126,7 +120,6 @@ export default function Hero() {
     (progress: number) => {
       const v = timingRef.current;
       cardScale.set(collapseScale(progress, v));
-      if (DEV_TUNING) heroDebug.shrinkScale = collapseScale(progress, v);
       cardOpacity.set(collapseOpacity(progress, v));
       setScenePaused((paused) => {
         const shouldPause = progress >= v.shrinkEnd;
@@ -183,7 +176,6 @@ export default function Hero() {
         >
           {/* Layer 0 — animated background */}
           <HeroSpheres paused={scenePaused} />
-          {HeroDebugOverlay ? <HeroDebugOverlay /> : null}
 
           {/* Layer 10 — hero content */}
           <div style={{ position: "relative", zIndex: 10, height: "100%" }}>

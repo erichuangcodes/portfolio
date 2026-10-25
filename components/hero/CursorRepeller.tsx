@@ -9,7 +9,6 @@ import {
 } from "@react-three/rapier";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { heroDebug } from "./hero-debug";
 
 // ─── Cursor feel, ported from the data-rain reference ─────────────────────────
 // data-rain bakes its coefficients for a fixed 1/60 step (K = 1-exp(-STEP*rate)).
@@ -59,7 +58,6 @@ export default function CursorRepeller() {
     // Window-level listeners: the canvas is pointerEvents:none so the hero
     // content keeps its own hover handlers. Covers touch via pointer events.
     const onMove = (event: PointerEvent) => {
-      heroDebug.pointerEvents++; // TEMPORARY debug
       pointer.current.x = event.clientX;
       pointer.current.y = event.clientY;
       pointer.current.active = true;
@@ -94,11 +92,6 @@ export default function CursorRepeller() {
   }, []);
 
   useFrame((state, delta) => {
-    // TEMPORARY debug (dev only).
-    const dbgBody = bodyRef.current?.translation();
-    if (dbgBody) heroDebug.cursorBody = [dbgBody.x, dbgBody.y, dbgBody.z];
-    heroDebug.cursorInfluence = influence.current;
-
     const body = bodyRef.current;
     const collider = colliderRef.current;
     if (!body || !collider) return;
