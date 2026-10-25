@@ -1,5 +1,5 @@
 import Hero from "@/components/hero/Hero";
-import ProjectsCarousel from "@/components/projects/ProjectsCarousel";
+import CurvedCarousel from "@/components/projects/CurvedCarousel";
 import Experience from "@/components/sections/Experience";
 import Contact from "@/components/sections/Contact";
 import RevealSection from "@/components/layout/RevealSection";
@@ -34,13 +34,15 @@ export default function Home() {
               Selected Work
             </p>
             <h2
-              className="text-display-lg"
+              className="text-display-md"
               style={{ color: colors.text.primary, margin: 0 }}
             >
-              Projects
+              From CAD model
+              <br />
+              to the real thing.
             </h2>
           </div>
-          <ProjectsCarousel />
+          <CurvedCarousel />
         </section>
       </RevealSection>
 
