@@ -8,7 +8,6 @@ import {
   useScroll,
 } from "framer-motion";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { bezier, colors, shadow } from "@/lib/tokens";
 import { DEV_TUNING } from "@/lib/dev-tuning";
@@ -180,24 +179,6 @@ export default function Hero() {
 
           {/* Layer 10 — hero content */}
           <div style={{ position: "relative", zIndex: 10, height: "100%" }}>
-
-            {/* Top-left: signature — scrolls away with the hero, not fixed */}
-            <div
-              className="hero-signature"
-              style={{ position: "absolute", top: "24px", left: "24px", opacity: 0.8, mixBlendMode: "multiply" }}
-            >
-              <Image
-                src="/portfolioicon.png"
-                alt="Eric Huang"
-                width={100}
-                height={100}
-                style={{ width: "100px", height: "auto", display: "block" }}
-                priority
-              />
-            </div>
-            <style>{`
-              @media (max-width: 767px) { .hero-signature { display: none; } }
-            `}</style>
 
             {/* Top-right: portfolio datestamp — hidden on mobile, Header takes that space */}
             <div
