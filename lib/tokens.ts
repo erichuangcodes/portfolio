@@ -21,6 +21,7 @@ export const colors = {
   accent: {
     primary: "var(--accent)",
     soft: "var(--accent-soft)",
+    strong: "var(--accent-strong)",
     text: "var(--accent-text)",
     glow: "rgba(126, 181, 237, 0.15)",
   },

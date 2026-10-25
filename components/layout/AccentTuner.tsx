@@ -8,7 +8,7 @@ import { button, folder, useControls } from "leva";
 import { useEffect, useRef } from "react";
 
 /** Must match --accent in app/globals.css. */
-const APPROVED_ACCENT = "#6e56f8";
+const APPROVED_ACCENT = "#ff6b4a";
 
 const PRESETS = {
   Iris: "#6e56f8",

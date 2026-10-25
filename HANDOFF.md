@@ -417,12 +417,15 @@ links and the song. The current copy is all marked PLACEHOLDER.
 
 The old yellow accent is gone. The accent now comes from CSS variables in
 `app/globals.css` (`:root`):
-- `--accent`: default `#6e56f8` (Iris).
+- `--accent`: default `#ff6b4a` (Coral, since 2026-10-25).
 - `--accent-soft`: `--accent` mixed 18% into white, for tints.
+- `--accent-strong`: `--accent` mixed 90% with black, for large text. Raw
+  coral is only about 2.6:1 on the off-white; this is about 3.2:1. Used for
+  the "Selected Work" heading and the Contact email.
 - `--accent-text`: `--accent` mixed 72% with black, for small text. It clears
   4.5:1 on the off-white for every preset.
 
-`colors.accent.primary`, `.soft` and `.text` in `lib/tokens.ts` point at these
+`colors.accent.primary`, `.soft`, `.strong` and `.text` in `lib/tokens.ts` point at these
 variables.
 
 - The dev-only Leva "Accent" folder (`components/layout/AccentTuner.tsx`) has

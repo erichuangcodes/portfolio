@@ -7,7 +7,6 @@ import {
   useReducedMotion,
   useScroll,
 } from "framer-motion";
-import { ChevronDown } from "lucide-react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -291,51 +290,9 @@ export default function Hero() {
                 </AnimatePresence>
               </div>
             </div>
-
-            {/* Bottom-center: scroll cue */}
-            <ScrollCue />
               </div>
         </motion.section>
       </div>
     </div>
-  );
-}
-
-// ─── scroll cue ───────────────────────────────────────────────────────────────
-
-function ScrollCue() {
-  const reduced = useReducedMotion();
-  return (
-    <motion.div
-      style={{
-        position: "absolute",
-        bottom: "2.25rem",
-        left: "50%",
-        transform: "translateX(-50%)",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "6px",
-      }}
-      animate={reduced ? undefined : { y: [0, 4, 0] }}
-      transition={{ duration: 2.4, repeat: Infinity, ease: "linear" }}
-      aria-hidden="true"
-    >
-      {/* Vertical line */}
-      <div
-        style={{
-          width: "1px",
-          height: "40px",
-          background: colors.accent.primary,
-          opacity: 0.6,
-        }}
-      />
-      <ChevronDown
-        size={14}
-        color={colors.accent.primary}
-        strokeWidth={1.5}
-        style={{ opacity: 0.6 }}
-      />
-    </motion.div>
   );
 }

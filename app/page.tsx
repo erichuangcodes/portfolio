@@ -26,22 +26,14 @@ export default function Home() {
           style={{
             paddingLeft:  "8%",
             paddingRight: "8%",
-            marginBottom: "4rem",
+            marginBottom: "5rem",
           }}
         >
-          <p
-            className="text-eyebrow"
-            style={{ color: colors.text.muted, marginBottom: "0.75rem" }}
+          <h2
+            className="text-display-lg"
+            style={{ color: colors.accent.strong, margin: 0 }}
           >
             Selected Work
-          </p>
-          <h2
-            className="text-display-md"
-            style={{ color: colors.text.primary, margin: 0 }}
-          >
-            From CAD model
-            <br />
-            to the real thing.
           </h2>
         </div>
         <CurvedCarousel />

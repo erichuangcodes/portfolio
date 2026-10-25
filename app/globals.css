@@ -127,8 +127,11 @@
 :root {
   /* Site accent. The committed default; the dev-only Leva "Accent" folder
      overrides it live. --accent-soft and --accent-text are derived. */
-  --accent: #6e56f8;
+  --accent: #ff6b4a;
   --accent-soft: color-mix(in oklab, var(--accent) 18%, white);
+  /* Slightly deeper, for large text (headings, the email): ~3.2:1 for coral,
+     enough for large text, where raw coral (~2.6:1) is not. */
+  --accent-strong: color-mix(in srgb, var(--accent) 90%, black);
   /* Darkened for small text on the off-white: clears 4.5:1 for every preset. */
   --accent-text: color-mix(in oklab, var(--accent) 72%, black);
   --background: oklch(1 0 0);

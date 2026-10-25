@@ -9,7 +9,7 @@ import { colors } from "@/lib/tokens";
 
 const swiftEase = [0.65, 0, 0.35, 1] as const;
 
-const EMAIL = "huangeric1029@gmail.com";
+const EMAIL = "contact.huangeric@gmail.com";
 
 // Brand icons — Lucide doesn't ship social platform icons.
 // All use 24×24 viewBox with stroke to match Lucide's visual language.
@@ -67,8 +67,7 @@ function EmailLink() {
         style={{
           display:        "block",
           textDecoration: "none",
-          color:          hovered ? colors.accent.text : colors.text.primary,
-          transition:     "color 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
+          color:          colors.accent.strong,
         }}
       >
         {EMAIL}
