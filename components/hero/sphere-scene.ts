@@ -11,22 +11,22 @@ export const CAMERA = {
 
 // ─── Atmosphere ───────────────────────────────────────────────────────────────
 // Camera sits at z=16 and the cluster spans z=-3.4..3.4, so distance runs
-// 12.6..19.4. Fog starts past the front of the cluster and ends well beyond the
-// back of it, so the far spheres only soften — on a white stage anything
-// tighter dissolves them into the background.
-export const FOG_NEAR = 17;
-export const FOG_FAR = 48;
+// 12.6..19.4. User-approved setting: fog runs from the camera out to 160, far
+// past the back of the cluster, so depth reads as a very light haze rather
+// than the close fog this started with.
+export const FOG_NEAR = 0;
+export const FOG_FAR = 160;
 
 // ─── Physics ──────────────────────────────────────────────────────────────────
 // Damping dominates the pull so motion stays heavy and never springs back.
-// CENTER_PULL is deliberately weak — it is cohesion, not gravity. Anything
-// strong enough to be felt crushes the cluster into a tight ball in the middle
-// of the frame; the bounds below are what actually hold the shape.
+// CENTER_PULL is cohesion, not gravity: the bounds below are what hold the
+// overall shape. User-approved at 0.75, which is firm enough to be felt and
+// keeps the cluster tighter than the 0.32 it started at.
 export const LINEAR_DAMPING = 2.0;
 export const ANGULAR_DAMPING = 1.5;
 export const RESTITUTION = 0.04;
 export const FRICTION = 0.4;
-export const CENTER_PULL = 0.32;
+export const CENTER_PULL = 0.75;
 export const CONTAINMENT_GAIN = 14;
 
 // ─── Cluster bounds ───────────────────────────────────────────────────────────

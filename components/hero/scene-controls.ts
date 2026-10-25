@@ -15,23 +15,30 @@ import { CENTER_PULL, FOG_FAR, FOG_NEAR } from "./sphere-scene";
 export const DEV_TUNING = process.env.NODE_ENV === "development";
 
 // ---------------------------------------------------------------------------
-// APPROVED LOOK (commit 5ece2e2) — the values the user signed off on a real
-// GPU. The Leva panel is initialised from these and must not change them.
-// Anything the panel produces is a proposal until it is pasted back in here.
+// APPROVED LOOK — tuned by the user in the dev panel on a real GPU and pasted
+// back here. These supersede the 5ece2e2 values; the earlier note claiming a
+// strong key muddies the pastels was written from software renders and was
+// wrong. Do not re-tune without being asked.
+//
+// Still true: these cannot be judged from a headless capture, because
+// SwiftShader contributes nothing from the PMREM env map.
 // ---------------------------------------------------------------------------
 export const APPROVED_SCENE = {
   /** Fill. High on purpose: three divides diffuse by PI without pre-scaling
       irradiance, so ~PI renders a surface at its true albedo. */
-  ambient: 1.35,
-  /** Soft key. Raising this is what turns the pastels dusty. */
-  key: 0.95,
+  ambient: 3,
+  key: 1.6,
   /** Cool rim from behind, to separate silhouettes from the stage. */
-  rim: 0.55,
-  /** The scene's main soft light — the PMREM env map. */
-  envMapIntensity: 1.15,
-  /** N8AO contact shadows. 0.45 is approved; 1.2 is too heavy. */
-  ao: 0.45,
-  background: colors.scene.bg,
+  rim: 1.85,
+  /** The PMREM env map — a major light here, invisible under SwiftShader. */
+  envMapIntensity: 1.5,
+  /** N8AO contact shadows. */
+  ao: 0.5,
+  /** Zero alpha: the WebGL scene clears transparent and the card's own
+      off-white surface shows through. See isTransparent(). */
+  background: "#00000000",
+  /** Fog from the camera out to 160 units. The cluster sits inside ~20 units,
+      so this is a very light haze rather than the old close fog. */
   fogNear: FOG_NEAR,
   fogFar: FOG_FAR,
   centerPull: CENTER_PULL,
@@ -113,4 +120,22 @@ export function formatSceneValues(v: SceneValues): string {
     `  ${changed("FOG_FAR", v.fogFar, APPROVED_SCENE.fogFar)}`,
     `  ${changed("CENTER_PULL", v.centerPull, APPROVED_SCENE.centerPull)}`,
   ].join("\n");
+}
+
+/**
+ * Leva's colour input carries an alpha channel, so it can hand back 8-digit
+ * hex. THREE.Color only parses 3- and 6-digit forms — it warns and keeps its
+ * previous value for anything else — so a zero-alpha pick has to be handled as
+ * a transparent clear rather than passed through as a colour.
+ */
+export function isTransparent(hex: string): boolean {
+  return /^#[0-9a-f]{6}00$/i.test(hex.trim());
+}
+
+/** A three-safe colour for `hex`, falling back to the stage colour. */
+export function sceneColor(hex: string): string {
+  const v = hex.trim();
+  if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(v)) return v;
+  if (/^#([0-9a-f]{6})[0-9a-f]{2}$/i.test(v)) return v.slice(0, 7);
+  return colors.scene.bg;
 }

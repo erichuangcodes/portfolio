@@ -9,7 +9,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { colors } from "@/lib/tokens";
 import CursorRepeller from "./CursorRepeller";
 import SphereField from "./SphereField";
-import { DEV_TUNING, useSceneValues } from "./scene-controls";
+import { DEV_TUNING, isTransparent, sceneColor, useSceneValues } from "./scene-controls";
 import { buildEnvironment } from "./sphere-environment";
 import { CAMERA, sphereCountForViewport } from "./sphere-scene";
 
@@ -22,6 +22,8 @@ const SceneTuner = DEV_TUNING
 function Atmosphere() {
   const gl = useThree((state) => state.gl);
   const scene = useSceneValues();
+  const stage = sceneColor(scene.background);
+  const transparent = isTransparent(scene.background);
   const environment = useMemo(() => buildEnvironment(gl), [gl]);
 
   useEffect(() => () => environment.dispose(), [environment]);
@@ -29,8 +31,11 @@ function Atmosphere() {
   return (
     <>
       <primitive object={environment.texture} attach="environment" />
-      <color attach="background" args={[scene.background]} />
-      <fog attach="fog" args={[scene.background, scene.fogNear, scene.fogFar]} />
+      {/* A zero-alpha background means "clear transparent": skip the scene
+          background entirely so the card's own surface shows through. Fog
+          still needs an opaque colour, and it matches the card. */}
+      {!transparent && <color attach="background" args={[stage]} />}
+      <fog attach="fog" args={[stage, scene.fogNear, scene.fogFar]} />
       {/* ───────────────────────────────────────────────────────────────────
           APPROVED LOOK — the values from commit 5ece2e2, confirmed by the user
           on a real GPU. Do not re-tune without being asked.
@@ -83,7 +88,9 @@ export default function HeroSpheres() {
         inset: 0,
         zIndex: 0,
         pointerEvents: "none",
-        background: scene.background,
+        background: isTransparent(scene.background)
+          ? "transparent"
+          : scene.background,
         // Match the card's animated corners and clip the canvas to them, so the
         // square canvas never pokes out past the rounded edge.
         borderRadius: "inherit",
@@ -112,7 +119,12 @@ export default function HeroSpheres() {
         // was authored as, so the lights above stay near 1.0 to avoid clipping.
         // (Setting gl.toneMapping directly does not work — R3F overwrites it.)
         flat
-        gl={{ antialias: false, powerPreference: "high-performance" }}
+        gl={{
+          antialias: false,
+          powerPreference: "high-performance",
+          // Needed for the transparent clear above; harmless otherwise.
+          alpha: true,
+        }}
       >
         <Atmosphere />
 
