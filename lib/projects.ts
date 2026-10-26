@@ -152,7 +152,7 @@ export const projects: Project[] = [
       {
         heading: "Process",
         body: "The design process started with measurements from occupational therapy guidelines for wheelchair-accessible work surfaces. I modeled the desk in Fusion360, then cut templates in CorelDRAW for the laser cutter.\n\nFirst prototype exposed a racking issue in the rail — the desk would shift laterally under load. Added cross-bracing in revision 2, which solved it without adding visual bulk.",
-        images: [],
+        images: ["/projects/standingdeskprototypes.jpg"],
       },
       {
         heading: "Errors & Fixes",
@@ -162,7 +162,7 @@ export const projects: Project[] = [
       {
         heading: "Final Result",
         body: "The desk was featured by Makers Making Change for its accessibility focus. The design files are available for other makerspaces to reproduce and adapt.\n\nBeyond the object itself, this project changed how I think about constraints — designing for a specific user need produces more interesting solutions than designing for an average case.",
-        images: [],
+        images: ["/projects/standingdeskmakerspace.jpg"],
       },
     ],
   },
