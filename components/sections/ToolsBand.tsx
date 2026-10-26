@@ -51,7 +51,7 @@ export default function ToolsBand() {
 
   return (
     // Sits inside the Projects section, so the parent owns spacing and background.
-    <div role="group" aria-label={heading ?? "Tools"} style={{ marginBottom: "5rem" }}>
+    <div role="group" aria-label={heading ?? "Tools"} style={{ marginTop: "5rem" }}>
       {heading && (
         <p
           className="text-eyebrow"

@@ -492,7 +492,7 @@ The spheres are slightly see-through.
 
 ## 3i. Tools band (2026-10-25)
 
-`components/sections/ToolsBand.tsx` sits under the Selected Work heading in Projects
+`components/sections/ToolsBand.tsx` sits below the carousel in Projects
 (`app/page.tsx`). The content (heading, plus a tool list of name and
 simple-icons slug) lives in `about.tools` in `lib/about.ts`.
 
@@ -502,7 +502,7 @@ simple-icons slug) lives in `about.tools` in `lib/about.ts`.
 - **Text labels:** used for Fusion 360 (only a generic Autodesk logo exists),
   Inventor, Onshape and CapCut (not in simple-icons).
 - **Motion:** a CSS marquee. The list is rendered twice and the track slides
-  `-50%`, linearly, at about 1.8s per item. The band is capped at ~10 logos wide (48px marks, 32px on mobile), centred, with a wide 25% edge fade. No heading (`heading: null`). It now lives inside the Projects section, between the "Selected Work" h2 (3rem below it) and the carousel (5rem below the band); the section keeps its 8rem top/bottom padding.
+  `-50%`, linearly, at about 1.8s per item. The band is capped at ~10 logos wide (48px marks, 32px on mobile), centred, with a wide 25% edge fade. No heading (`heading: null`). It now lives inside the Projects section, below the carousel (5rem gap); the heading keeps its 5rem gap to the carousel; the section keeps its 8rem top/bottom padding.
 - **Pausing:** it pauses on hover (and shows the tool name in Geist) and when
   off-screen (`useInView`).
 - **Reduced motion:** a static row.
