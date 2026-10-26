@@ -10,6 +10,7 @@ import { colors } from "@/lib/tokens";
 import CursorRepeller from "./CursorRepeller";
 import SphereField from "./SphereField";
 import { DEV_TUNING } from "@/lib/dev-tuning";
+import { markHeroReady } from "@/lib/hero-ready";
 import { useSceneValues } from "./scene-controls";
 import { buildEnvironment } from "./sphere-environment";
 import { CAMERA, extraSpheresForViewport, sphereCountForViewport } from "./sphere-scene";
@@ -20,6 +21,16 @@ import { CAMERA, extraSpheresForViewport, sphereCountForViewport } from "./spher
 const SceneTuner = DEV_TUNING
   ? dynamic(() => import("./SceneTuner"), { ssr: false, loading: () => null })
   : null;
+
+// Mounted beside the spheres, so it only runs once Physics (and its WASM) has
+// resolved. One rAF later the first frame is on screen and the loader can go.
+function HeroReadySignal() {
+  useEffect(() => {
+    const id = requestAnimationFrame(() => markHeroReady());
+    return () => cancelAnimationFrame(id);
+  }, []);
+  return null;
+}
 
 function Atmosphere() {
   const gl = useThree((state) => state.gl);
@@ -155,11 +166,15 @@ export default function HeroSpheres({ paused = false }: Props) {
         <Atmosphere />
 
         {frozen ? (
-          <SphereField key={fieldKey} count={count} extras={extras} frozen />
+          <>
+            <SphereField key={fieldKey} count={count} extras={extras} frozen />
+            <HeroReadySignal />
+          </>
         ) : (
           <Physics gravity={[0, 0, 0]}>
             <SphereField key={fieldKey} count={count} extras={extras} frozen={false} />
             <CursorRepeller />
+            <HeroReadySignal />
           </Physics>
         )}
 

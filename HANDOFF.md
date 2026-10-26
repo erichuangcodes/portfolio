@@ -625,3 +625,16 @@ simple-icons slug) lives in `about.tools` in `lib/about.ts`.
    clear place. Check each one's license first. Candidates are already sitting
    unused in `components/` and `inspirations/`. Adapt them to the design
    system rather than pasting them in.
+
+## 3j. Loading screen (2026-10-25)
+
+- `components/layout/LoadingScreen.tsx`, mounted in `app/layout.tsx` outside
+  `PageTransition` (its transform would make `position: fixed` page-relative).
+- A white full-screen cover with a spinning two-tone yin-yang (ink + coral, no
+  dots), 56px, one turn per `deliberate` (1.2s). It fades out over `slow` with
+  `expo` easing.
+- It's home-only (`usePathname() === "/"`) and dismisses on `lib/hero-ready.ts`.
+  `HeroSpheres` fires that one rAF after Physics resolves. The cover stays at
+  least 700ms, with an 8s fallback if WebGL/WASM fails. It never re-shows on
+  client navigation.
+- Reduced motion: no spin, faster fade.
