@@ -46,7 +46,7 @@ function LogoCell({
           width={64}
           height={64}
           onError={() => setImgError(true)}
-          style={{ objectFit: "contain", width: "64px", height: "64px" }}
+          style={{ objectFit: "contain", width: "64px", height: "64px", borderRadius: "12px" }}
         />
       ) : (
         <div

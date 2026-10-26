@@ -57,7 +57,7 @@ export const EXPERIENCE: readonly ExperienceEntry[] = [
   {
     company: "IeSoSc @ NYU",
     initials: "IN",
-    logoPath: null, // replace with "/logos/nyu.png" once you have the file
+    logoPath: "/logos/nyu.png",
     role: "Intern",
     dates: "Jul 2025 – Aug 2025",
     year: "2025",
@@ -70,7 +70,7 @@ export const EXPERIENCE: readonly ExperienceEntry[] = [
   {
     company: "MakerSpace NYC",
     initials: "MS",
-    logoPath: null,
+    logoPath: "/logos/makerspace-nyc.png",
     role: "Program Member",
     dates: "Jul 2024 – Aug 2024",
     year: "2024",
@@ -83,7 +83,7 @@ export const EXPERIENCE: readonly ExperienceEntry[] = [
   {
     company: "Explortle",
     initials: "EX",
-    logoPath: null,
+    logoPath: "/logos/explortle.png",
     role: "Event Manager",
     dates: "Feb 2025 – Present",
     year: "2025",
@@ -109,7 +109,7 @@ export const EXPERIENCE: readonly ExperienceEntry[] = [
   {
     company: "SITHS Saturn Robotics",
     initials: "SR",
-    logoPath: null,
+    logoPath: "/logos/siths-saturn.png",
     role: "Build Team",
     dates: "Sept 2025 – Present",
     year: "2025–26",
