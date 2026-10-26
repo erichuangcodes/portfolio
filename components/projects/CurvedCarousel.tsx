@@ -318,9 +318,9 @@ export default function CurvedCarousel() {
         </div>
       </motion.div>
 
-      {/* Controls centre on the 3/5 line from md up; plain centre on phones,
+      {/* Controls centre on the 3/4 line from md up; plain centre on phones,
           where an off-centre line leaves too little room. */}
-      <div className="mt-10 flex justify-center px-[8%] md:pl-[20%] md:pr-0">
+      <div className="mt-10 flex justify-center px-[8%] md:pl-[50%] md:pr-0">
         <div className="flex items-center gap-4">
           <NavButton direction="prev" controls={stageId} onClick={() => step(-1)} />
           <span
