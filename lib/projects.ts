@@ -277,35 +277,35 @@ export const projects: Project[] = [
 
   // ── PROJECT 6 ────────────────────────────────────────────────────────────
   {
-    id: "bonsyfilms",
-    slug: "bonsyfilms",
-    title: "bonsyfilms",
-    role: "Videographer & Creator",
-    year: "2025–",
-    pitch: "A TikTok videography account covering filmmaking, editing, and music — 1M+ views.",
-    tech: ["Video Production", "Editing"],
-    links: { demo: "https://www.tiktok.com/@bonsyfilms" },
+    id: "quota-machine",
+    slug: "quota-machine",
+    title: "Quota Machine",
+    role: "Game Engine & Deployment",
+    year: "2026",
+    pitch: "A roguelike puzzle game where you wire logic circuits to hit your factory’s quota.",
+    tech: ["Vite", "GitHub Pages", "GitHub Actions"],
+    links: {},
     heroImage: null,
-    gradient: "linear-gradient(145deg, #2a2a2a 0%, #8a8a8a 100%)",
+    gradient: "linear-gradient(145deg, #0f4c5c 0%, #5fb49c 100%)",
     sections: [
       {
         heading: "Overview",
-        body: "bonsyfilms is a TikTok account focused on filmmaking, editing techniques, and music. 1M+ views and 250k+ likes across videos covering everything from color grading to camera movement to sync editing.\n\nThe account started as a place to post video experiments and became a consistent creative practice. It runs in parallel with engineering work — and the skills transfer more than expected.",
+        body: "Quota Machine is a browser-based roguelike puzzle game about a systems engineer drowning in debt; every turn, you solve digital logic circuit puzzles to power machines, chain those machines together, and hit a rising quota before you lose. Digital logic and the fragility of automated systems are usually taught through dry textbook diagrams, so we built a game that makes you actually feel what it means to automate something and then watch it fail.\n\nI built it with one teammate at VSHacks 2026 in about 30 hours under the hackathon’s “Automation” theme. Honorable mention at the hackathon.",
         images: [],
       },
       {
         heading: "Process",
-        body: "Each video starts with a specific technique I want to explore or demonstrate. Most are under 60 seconds, which forces tight editing — every cut has to earn its place.\n\nThe constraint of short-form video sharpened my sense of pacing and visual hierarchy faster than longer work would have. Identifying the single strongest shot and building around it is the same skill as identifying the key constraint in a mechanical design.",
+        body: "We spent the first hour without writing any code, instead scripting out a single player turn in plain English, which caught a disagreement about what “connecting two machines” meant on screen before it could cost us a day. I prototyped and tested the hardest piece up front, a circuit evaluator that checks any player-built gate graph against a truth table, so the UI built on top of it couldn’t get blocked by unknown logic bugs.\n\nFrom there, I owned the game engine (circuit evaluator, turn resolution, stamina, failure rolls, and synergy math) and the deployment pipeline (Vite, GitHub Pages, and GitHub Actions on push to main), while Raymond owned the original idea and making bug fixes and the circuit diagram functions. To finish on time, we cut the sleep and boss favorability meters, swapped scheduled machine failures for a simple random roll after 5 turns, and hardcoded 6 machines with 3 synergy pairs instead of a procedural system.",
         images: [],
       },
       {
         heading: "Errors & Fixes",
-        body: "Early videos had inconsistent color — I was grading on a monitor that wasn't calibrated, and the videos looked different on every other screen. Getting a proper calibration target and learning to grade for a neutral reference fixed this.\n\nPacing was also an issue in early edits — cuts would land a beat too late, breaking momentum. Learned to edit to the transient of the beat, not the note.",
+        body: "Problem: While manually merging a stamina feature into the existing game files, I pasted the new functions beside the originals, which left two createInitialState and two advanceTurn exports and broke the build.\nFix: I merged them into single functions, adding stamina and maxStamina to the existing initial state and turn-advance return, then deleted the duplicates.\n\nProblem: An early version of the circuit editor had its validation logic at module top level instead of inside the component, referencing variables that didn’t exist in that scope.\nFix: I moved the validate-and-spend-stamina logic into a handleCheck function inside the component and threaded gameState and setGameState through as props, so it had real state to read and write.\n\nProblem: Scope creep was ultimately a bigger enemy than any bug; the original pitch had a 4-meter resource system, scheduled failures, and procedural synergies, which was unbuildable in the time we had.\nFix: We set a hard checkpoint around hour 5 or 6 for a working “place a gate, wire it, validate it” toy, with a pre-decided plan to pivot if it failed; it worked, and having that kill switch made later cuts easier to agree on.",
         images: [],
       },
       {
         heading: "Final Result",
-        body: "1M+ views, 250k+ likes, and a consistent creative practice that sharpens the instincts I bring to engineering documentation and presentation.\n\nThe edit is where the story becomes true. That applies to film, but also to how a project is documented, presented, and remembered.",
+        body: "Spending half an hour writing out one turn in plain English was probably the highest-leverage decision of the whole weekend; under time pressure the instinct is to start building immediately, but cheap questions (what “connect two machines” means, what a failure looks like, whether connecting costs stamina) get expensive fast once code is sitting on top of the wrong answer.\n\nNext time, I would also lock in the deploy pipeline in the first hour instead of trusting it to work at the end, since discovering a broken GitHub Pages config at hour 28 would have been the worst way to lose this project.",
         images: [],
       },
     ],
