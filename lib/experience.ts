@@ -120,14 +120,14 @@ export const EXPERIENCE: readonly ExperienceEntry[] = [
 
   // ── ENTRY 6 ──────────────────────────────────────────────────────────────
   {
-    company: "bonsyfilms",
-    initials: "BF",
-    logoPath: null,
-    role: "Videographer / Creator",
-    dates: "Sept 2025 – Present",
-    year: "2025–",
+    company: "Amnesty Club",
+    initials: "AC",
+    logoPath: "/logos/amnesty.png",
+    role: "Secretary",
+    dates: "2024 – Present",
+    year: "2024",
     description:
-      "Run a videography-focused social media account covering filmmaking, editing, and music. 1M+ views and 250k+ likes on TikTok. The practice sharpens composition and pacing instincts that feed back into how I document and present engineering work.",
-    tech: ["Video Production", "Editing", "TikTok"],
+      "Secretary of our Amnesty International club, which works on human rights through education, letter-writing campaigns and petitions, advocacy events, and fundraising. I send out the club's emails and share the videos and presentations with the organization.",
+    tech: ["Communications", "Advocacy"],
   },
 ];
