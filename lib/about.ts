@@ -28,12 +28,12 @@ export const about = {
     "I make films too.", // PLACEHOLDER
   ],
 
-  /** 3–4 short paragraphs. PLACEHOLDER copy, replace all of it. */
+  /** 3–4 short paragraphs. */
   paragraphs: [
-    "[Placeholder] One or two sentences on who you are and what you're studying or working on right now.",
-    "[Placeholder] What you like building: hardware, CAD, the moment a model becomes a real object.",
-    "[Placeholder] Where design comes in, and how filmmaking shapes the way you tell a project's story.",
-    "[Placeholder] What you're looking for next, or what you do when you're away from the desk.",
+    "hi, my name is eric! i'm currently a high school senior in NYC. I aspire to become a mechanical engineer major and specialize in robotics.",
+    "some of my work includes embedded systems, enclosement design, and hardware design. I've explored how sensors interact with the real world, and am currently attempting to debug that with my FTC team right now.",
+    "outside of that, i love playing basketball and biking. while biking, since im usually in the city, i will film around and post edits on social media.",
+    "if your building something or are just curious in anything, please reach out! i dont bite :0",
   ],
 
   /**
