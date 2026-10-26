@@ -318,14 +318,9 @@ export default function CurvedCarousel() {
         </div>
       </motion.div>
 
-      <div
-        className="mt-10 flex flex-col items-start gap-6 sm:flex-row sm:items-end sm:justify-between"
-        style={{ paddingLeft: "8%", paddingRight: "8%" }}
-      >
-        <p className="text-body-sm" style={{ color: colors.text.muted, margin: 0, maxWidth: "34ch" }}>
-          Drag, swipe or use the arrow keys to browse. Open a project for the full write-up.
-        </p>
-        <div className="flex items-center gap-4">
+      <div className="mt-10 flex justify-center" style={{ paddingLeft: "8%", paddingRight: "8%" }}>
+        {/* Centred, nudged slightly right of centre. */}
+        <div className="flex items-center gap-4" style={{ transform: "translateX(clamp(1rem, 5vw, 4rem))" }}>
           <NavButton direction="prev" controls={stageId} onClick={() => step(-1)} />
           <span
             aria-hidden
