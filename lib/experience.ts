@@ -58,9 +58,9 @@ export const EXPERIENCE: readonly ExperienceEntry[] = [
     company: "SITHS Saturn Robotics",
     initials: "SR",
     logoPath: "/logos/siths-saturn.png",
-    role: "Build Team",
+    role: "Build Lead",
     dates: "Sept 2025 – Present",
-    year: "2025–26",
+    year: "2025",
     description:
       "CAD, build, and assemble the team's FTC competition robot. Helped earn 1st place at NYC Qualifier 2 as winning alliance captain, and a Top 6 alliances finish at the NYC Championship. Scout opposing teams at competitions and contribute match strategy.",
     tech: ["Onshape", "Mechanical Assembly", "FTC"],

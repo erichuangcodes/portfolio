@@ -32,7 +32,7 @@ export const about = {
   paragraphs: [
     "hi, my name is eric! i'm currently a high school senior in NYC. I aspire to become a mechanical engineer major and specialize in robotics.",
     "some of my work includes embedded systems, enclosement design, and hardware design. I've explored how sensors interact with the real world, and am currently attempting to debug that with my FTC team right now.",
-    "outside of that, i love playing basketball and biking. while biking, since im usually in the city, i will film around and post edits on social media.",
+    "outside of that, i love playing basketball and biking. while biking, since im usually in the city, i will film around and post edits on social media. PS. im the biggest anime fan ever",
     "if your building something or are just curious in anything, please reach out! i dont bite :0",
   ],
 
