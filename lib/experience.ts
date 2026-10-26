@@ -71,7 +71,7 @@ export const EXPERIENCE: readonly ExperienceEntry[] = [
     company: "Explortle",
     initials: "EX",
     logoPath: "/logos/explortle.png",
-    role: "Event Manager",
+    role: "Head of Event Coordination",
     dates: "Feb 2025 – Present",
     year: "2025",
     description:
