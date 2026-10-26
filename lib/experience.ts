@@ -96,7 +96,7 @@ export const EXPERIENCE: readonly ExperienceEntry[] = [
   {
     company: "Electrical Workshop Club",
     initials: "EW",
-    logoPath: null,
+    logoPath: "/logos/electrical-workshop.png",
     role: "President",
     dates: "Jan 2025 – Present",
     year: "2025",
