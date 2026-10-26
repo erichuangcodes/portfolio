@@ -205,35 +205,35 @@ export const projects: Project[] = [
 
   // ── PROJECT 4 ────────────────────────────────────────────────────────────
   {
-    id: "mechanical-keyboard",
-    slug: "mechanical-keyboard",
-    title: "Mechanical Keyboard",
-    role: "Builder",
+    id: "velometrics",
+    slug: "velometrics",
+    title: "Velometrics",
+    role: "Designer & Builder",
     year: "2025",
-    pitch: "Hand-soldered from a bare PCB — every switch placed by hand, firmware flashed with QMK.",
-    tech: ["Soldering", "PCB", "QMK Firmware"],
+    pitch: "A DIY ESP32-S3 bike computer with live GPS and a custom LVGL display.",
+    tech: ["ESP32-S3", "LVGL", "C++", "Fusion360"],
     links: {},
     heroImage: null,
     gradient: "linear-gradient(145deg, #6b31b0 0%, #d4649a 100%)",
     sections: [
       {
         heading: "Overview",
-        body: "Started with a bare 60% PCB from KBDfans and soldered every component from scratch at home. The build taught the full process of through-hole soldering, switch modding, and QMK firmware configuration.\n\nNow my daily driver. The experience directly seeded the Electrical Workshop Club's curriculum — I used this build as the demo for the club's first PCB soldering session.",
+        body: "Velometrics is a bike computer I built from scratch, since I wanted something between a phone strapped to the handlebars and a $200+ Garmin, with a screen I actually control. I finished the basic tier, which runs an LVGL interface on an ESP32-S3 with live GPS that gets a fix in about 20 to 25 seconds, and I designed the enclosure in Fusion 360.",
         images: [],
       },
       {
         heading: "Process",
-        body: "The PCB arrived as a bare board with no components. First step was flashing the bootloader to verify the microcontroller was functional before soldering anything permanent.\n\nSwitch placement came next — each switch is hot-glued into the plate, then soldered in two passes: first leg only to check alignment, then the second leg once confirmed. Desoldering is painful, so the two-pass approach saved several switches.",
+        body: "Before building anything, I pressure-tested the idea by asking who would need this when a phone mount is free and Garmin already owns the serious riders; that question pushed me to scope the build in tiers, starting with a moving GPS dot and speed, then BLE sensors, then WiFi and Strava sync. Scoping it this way also let me cut the parts list from about $200 to $300 down to $60 to $70 by dropping the IMU, RTC, and buzzer.\n\nWhile the parts shipped, I designed the UI in an LVGL simulator, first in the browser and then in the C/SDL version, so the interface was ready by the time the hardware arrived. The firmware came together in phases (blink, serial, LCD, LVGL, then GPS), and I held off on CAD until the breadboard and perfboard layout was locked before modeling the enclosure in Fusion. I ultimately stopped after the basic tier, so the sensor and sync tiers are still unbuilt.",
         images: [],
       },
       {
         heading: "Errors & Fixes",
-        body: "Three switches had cold solder joints on the first pass — the solder balled up instead of flowing into the pad. Reflowed with flux and a higher iron temperature. The root cause was using too little flux from the start.\n\nThe QMK configuration also had a layer conflict — the Fn layer was overriding the default layer on certain combos. Fixed by re-reading the QMK docs on layer precedence and restructuring the keymap.",
+        body: "Problem: Firmware uploads kept failing whenever the GPS was wired in.\nFix: I unplugged the GPS TX wire on GPIO 16 while flashing and plugged it back in afterward; long term, I want a small switch or jumper on that line.\n\nProblem: Serial printed “HSPI Does not have default pins on ESP32S3,” since TFT_eSPI assumed classic ESP32 pins.\nFix: I set the SPI port to FSPI and defined my custom TFT pins (MOSI 11, SCLK 12, CS 10, DC 13, RST 14) in the build flags.\n\nProblem: Colors on the real LCD didn’t match the simulator.\nFix: The issue was byte swapping, so I matched LV_COLOR_16_SWAP in the build flags with the swap flag in the pushColors flush call and tested both settings.\n\nProblem: A Guru Meditation (StoreProhibited) crash hit during setup() before anything printed.\nFix: I stripped setup() down to just Serial, then re-added tft.init(), LVGL, and GPS one at a time to find the crashing line.",
         images: [],
       },
       {
         heading: "Final Result",
-        body: "A fully functional 60% mechanical keyboard that I use every day. The build took one weekend plus evenings over two weeks.\n\nEvery keystroke is a decision you made with your hands. That ended up being the reason I kept it: there's a directness to using something you built component by component that changes how you relate to the tool.",
+        body: "Designing the UI in a simulator while parts were still in the mail saved me real time, and it’s something I would do again on any hardware project. Asking early whether the device solves a real problem also kept me from just building a worse phone.",
         images: [],
       },
     ],

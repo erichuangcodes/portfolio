@@ -317,6 +317,7 @@ function ContentSection({
             style={{
               color:      colors.text.secondary,
               lineHeight: 1.75,
+              whiteSpace: "pre-line", // single \n = line break (Problem / Fix pairs)
               margin:     i < paragraphs.length - 1 ? "0 0 1.5rem" : 0,
             }}
           >
