@@ -318,9 +318,10 @@ export default function CurvedCarousel() {
         </div>
       </motion.div>
 
-      <div className="mt-10 flex justify-center" style={{ paddingLeft: "8%", paddingRight: "8%" }}>
-        {/* Centred, nudged slightly right of centre. */}
-        <div className="flex items-center gap-4" style={{ transform: "translateX(clamp(1rem, 5vw, 4rem))" }}>
+      {/* Controls centre on the 3/4 line from md up; plain centre on phones,
+          where the 3/4 line leaves too little room. */}
+      <div className="mt-10 flex justify-center px-[8%] md:pl-[50%] md:pr-0">
+        <div className="flex items-center gap-4">
           <NavButton direction="prev" controls={stageId} onClick={() => step(-1)} />
           <span
             aria-hidden
