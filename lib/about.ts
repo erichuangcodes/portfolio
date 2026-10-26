@@ -42,10 +42,11 @@ export const about = {
    * without the layout jumping; portrait photos fill it best.
    */
   photos: [
-    { src: null, alt: "Placeholder photo 1" },
-    { src: null, alt: "Placeholder photo 2" },
-    { src: null, alt: "Placeholder photo 3" },
-    { src: null, alt: "Placeholder photo 4" },
+    { src: "/about/friends-dance.jpg", alt: "Eric with two friends at a school dance under blue lighting" },
+    { src: "/about/soldering-sunset.jpg", alt: "A soldering bench with a magnifier lamp silhouetted against a sunset over the city" },
+    { src: "/about/pavilion-night.jpg", alt: "Curved glass pavilions lit at night with One World Trade Center behind them" },
+    { src: "/about/ftc-robot.jpg", alt: "The FTC competition robot on a pit table at a scrimmage" },
+    { src: "/about/katsudon.jpg", alt: "A bowl of katsudon on a dark wooden tray with a lit candle behind it" },
   ] satisfies AboutPhoto[],
 
   links: {
