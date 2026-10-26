@@ -55,31 +55,18 @@ export type ExperienceEntry = {
 export const EXPERIENCE: readonly ExperienceEntry[] = [
   // ── ENTRY 1 ──────────────────────────────────────────────────────────────
   {
-    company: "IeSoSc @ NYU",
-    initials: "IN",
-    logoPath: "/logos/nyu.png",
-    role: "Intern",
-    dates: "Jul 2025 – Aug 2025",
-    year: "2025",
+    company: "SITHS Saturn Robotics",
+    initials: "SR",
+    logoPath: "/logos/siths-saturn.png",
+    role: "Build Team",
+    dates: "Sept 2025 – Present",
+    year: "2025–26",
     description:
-      "Led the design of Aerio — a wearable smart air purification mask — during NYU's Innovation, Entrepreneurship and Science of Smart Cities program. Owned mechanical design in Fusion360, contributed C++ Arduino firmware, and built a Python companion app tracking air quality, gas levels, and filter status. Pitched to investors at the final showcase and received two offers.",
-    tech: ["Fusion360", "Arduino", "C++", "Python"],
+      "CAD, build, and assemble the team's FTC competition robot. Helped earn 1st place at NYC Qualifier 2 as winning alliance captain, and a Top 6 alliances finish at the NYC Championship. Scout opposing teams at competitions and contribute match strategy.",
+    tech: ["Onshape", "Mechanical Assembly", "FTC"],
   },
 
   // ── ENTRY 2 ──────────────────────────────────────────────────────────────
-  {
-    company: "MakerSpace NYC",
-    initials: "MS",
-    logoPath: "/logos/makerspace-nyc.png",
-    role: "Program Member",
-    dates: "Jul 2024 – Aug 2024",
-    year: "2024",
-    description:
-      "Operated laser cutters, table saws, and sanding machines alongside CorelDRAW and Fusion360. Designed and built furniture — tables, chairs, and a standing desk for users with disabilities. Won first place for best chair design out of the full cohort.",
-    tech: ["Fusion360", "CorelDRAW", "Laser Cutter", "Woodworking"],
-  },
-
-  // ── ENTRY 3 ──────────────────────────────────────────────────────────────
   {
     company: "Explortle",
     initials: "EX",
@@ -92,7 +79,7 @@ export const EXPERIENCE: readonly ExperienceEntry[] = [
     tech: ["Curriculum Design", "Presentation"],
   },
 
-  // ── ENTRY 4 ──────────────────────────────────────────────────────────────
+  // ── ENTRY 3 ──────────────────────────────────────────────────────────────
   {
     company: "Electrical Workshop Club",
     initials: "EW",
@@ -105,20 +92,7 @@ export const EXPERIENCE: readonly ExperienceEntry[] = [
     tech: ["Soldering", "PCB Assembly", "CAD"],
   },
 
-  // ── ENTRY 5 ──────────────────────────────────────────────────────────────
-  {
-    company: "SITHS Saturn Robotics",
-    initials: "SR",
-    logoPath: "/logos/siths-saturn.png",
-    role: "Build Team",
-    dates: "Sept 2025 – Present",
-    year: "2025–26",
-    description:
-      "CAD, build, and assemble the team's FTC competition robot. Helped earn 1st place at NYC Qualifier 2 as winning alliance captain, and a Top 6 alliances finish at the NYC Championship. Scout opposing teams at competitions and contribute match strategy.",
-    tech: ["Onshape", "Mechanical Assembly", "FTC"],
-  },
-
-  // ── ENTRY 6 ──────────────────────────────────────────────────────────────
+  // ── ENTRY 4 ──────────────────────────────────────────────────────────────
   {
     company: "Amnesty Club",
     initials: "AC",
@@ -129,5 +103,31 @@ export const EXPERIENCE: readonly ExperienceEntry[] = [
     description:
       "Secretary of our Amnesty International club, which works on human rights through education, letter-writing campaigns and petitions, advocacy events, and fundraising. I send out the club's emails and share the videos and presentations with the organization.",
     tech: ["Communications", "Advocacy"],
+  },
+
+  // ── ENTRY 5 ──────────────────────────────────────────────────────────────
+  {
+    company: "IeSoSc @ NYU",
+    initials: "IN",
+    logoPath: "/logos/nyu.png",
+    role: "Intern",
+    dates: "Jul 2025 – Aug 2025",
+    year: "2025",
+    description:
+      "Led the design of Aerio — a wearable smart air purification mask — during NYU's Innovation, Entrepreneurship and Science of Smart Cities program. Owned mechanical design in Fusion360, contributed C++ Arduino firmware, and built a Python companion app tracking air quality, gas levels, and filter status. Pitched to investors at the final showcase and received two offers.",
+    tech: ["Fusion360", "Arduino", "C++", "Python"],
+  },
+
+  // ── ENTRY 6 ──────────────────────────────────────────────────────────────
+  {
+    company: "MakerSpace NYC",
+    initials: "MS",
+    logoPath: "/logos/makerspace-nyc.png",
+    role: "Program Member",
+    dates: "Jul 2024 – Aug 2024",
+    year: "2024",
+    description:
+      "Operated laser cutters, table saws, and sanding machines alongside CorelDRAW and Fusion360. Designed and built furniture — tables, chairs, and a standing desk for users with disabilities. Won first place for best chair design out of the full cohort.",
+    tech: ["Fusion360", "CorelDRAW", "Laser Cutter", "Woodworking"],
   },
 ];
